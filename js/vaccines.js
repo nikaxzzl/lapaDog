@@ -46,5 +46,21 @@ function update() {
 document.getElementById('pet-type').onchange = update;
 document.getElementById('age-weeks').oninput = update;
 
-// Первый расчёт
+// Отправка события vaccine_calc
+var typeEl = document.getElementById('pet-type');
+var ageEl = document.getElementById('age-weeks');
+
+if (typeEl && ageEl) {
+  typeEl.addEventListener('change', function () {
+    if (window.LapaAnalytics) {
+      window.LapaAnalytics.vaccineCalc(typeEl.value, parseInt(ageEl.value) || 0);
+    }
+  });
+  ageEl.addEventListener('change', function () {
+    if (window.LapaAnalytics) {
+      window.LapaAnalytics.vaccineCalc(typeEl.value, parseInt(ageEl.value) || 0);
+    }
+  });
+}
+
 update();

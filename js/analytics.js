@@ -68,3 +68,11 @@
     });
 
 })();
+
+document.addEventListener('click', function (e) {
+  var el = e.target.closest('[data-event="pet_type_select"]');
+  if (!el) return;
+  var pet = el.dataset.petType;
+  sessionStorage.setItem('selected_pet', pet);
+  window.location.href = 'contacts.html';
+});
