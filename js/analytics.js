@@ -72,7 +72,16 @@
 document.addEventListener('click', function (e) {
   var el = e.target.closest('[data-event="pet_type_select"]');
   if (!el) return;
-  var pet = el.dataset.petType;
-  sessionStorage.setItem('selected_pet', pet);
-  window.location.href = 'contacts.html';
+
+  document.querySelectorAll('.pet-select__card').forEach(function (card) {
+    card.classList.remove('pet-select__card--active');
+  });
+
+  el.classList.add('pet-select__card--active');
+
+  sessionStorage.setItem('selected_pet', el.dataset.petType);
+
+
+  var services = document.querySelector('.services');
+  if (services) services.scrollIntoView({ behavior: 'smooth' });
 });

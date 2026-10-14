@@ -1058,3 +1058,8 @@ img {
   font-weight: 600;
   color: var(--color-primary-dark);
 }
+.pet-select__card--active {
+  border-color: var(--color-primary);
+  background: var(--color-accent);
+  transform: translateY(-4px);
+}
