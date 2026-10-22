@@ -1,13 +1,14 @@
 // js/form.js
-// Отправка заявки в Google Apps Script + сохранение UTM + события GA4.
+// Валидация, сохранение UTM, отправка в Apps Script, события GA4.
 
 document.addEventListener('DOMContentLoaded', function () {
   var form = document.getElementById('lead-form');
   if (!form) return;
 
   var btn = form.querySelector('button[type="submit"]');
+  var endpoint = window.LEADS_ENDPOINT || '';
 
-  // ---------- UTM: читаем из адреса и храним в sessionStorage ----------
+  // ---------- UTM: сохраняем в sessionStorage ----------
   var UTM_KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content'];
   var params = new URLSearchParams(window.location.search);
 
@@ -16,11 +17,11 @@ document.addEventListener('DOMContentLoaded', function () {
     if (value) sessionStorage.setItem(key, value);
   });
 
-  function getUtm(key) {
-    return sessionStorage.getItem(key) || '';
+  function getUtm(key, fallback) {
+    return sessionStorage.getItem(key) || fallback;
   }
 
-  // ---------- form_start: первое взаимодействие ----------
+  // ---------- form_start ----------
   var formStarted = false;
   form.addEventListener('input', function () {
     if (!formStarted) {
@@ -53,8 +54,8 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     if (!form.consent.checked) {
-      if (window.LapaAnalytics) window.LapaAnalytics.formError('consent', 'validation');
       showError(form.consent, 'Согласитесь с политикой конфиденциальности');
+      if (window.LapaAnalytics) window.LapaAnalytics.formError('consent', 'validation');
       return false;
     }
 
@@ -65,6 +66,12 @@ document.addEventListener('DOMContentLoaded', function () {
   form.addEventListener('submit', function (e) {
     e.preventDefault();
     if (!validate()) return;
+
+    if (!endpoint) {
+      showError(btn, 'Форма временно недоступна. Позвоните нам.');
+      if (window.LapaAnalytics) window.LapaAnalytics.formError('form', 'server');
+      return;
+    }
 
     var requestId = 'REQ-' + (crypto.randomUUID
       ? crypto.randomUUID()
@@ -77,19 +84,18 @@ document.addEventListener('DOMContentLoaded', function () {
       email: form.email.value.trim(),
       pet_type: form.pet_type.value,
       service: form.service.value,
-      utm_source: getUtm('utm_source') || 'direct',
-      utm_medium: getUtm('utm_medium') || 'none',
-      utm_campaign: getUtm('utm_campaign') || 'not_set',
-      utm_content: getUtm('utm_content') || 'not_set'
+      utm_source: getUtm('utm_source', 'direct'),
+      utm_medium: getUtm('utm_medium', 'none'),
+      utm_campaign: getUtm('utm_campaign', 'not_set'),
+      utm_content: getUtm('utm_content', 'not_set')
     };
 
-    // Блокируем кнопку
     btn.disabled = true;
     btn.textContent = 'Отправляем…';
 
     if (window.LapaAnalytics) window.LapaAnalytics.formSubmit('lead_form');
 
-    fetch(LEADS_ENDPOINT, {
+    fetch(endpoint, {
       method: 'POST',
       headers: { 'Content-Type': 'text/plain;charset=utf-8' },
       body: JSON.stringify(payload)
@@ -109,7 +115,7 @@ document.addEventListener('DOMContentLoaded', function () {
           throw new Error((data && data.error) || 'server');
         }
       })
-      .catch(function (err) {
+      .catch(function () {
         if (window.LapaAnalytics) {
           window.LapaAnalytics.formError('form', 'server');
         }
@@ -134,7 +140,7 @@ document.addEventListener('DOMContentLoaded', function () {
       err.textContent = message;
       input.parentNode.insertBefore(err, input.nextSibling);
     }
-    input.focus();
+    if (input.focus) input.focus();
 
     input.addEventListener('input', function handler() {
       input.style.borderColor = '';

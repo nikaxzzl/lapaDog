@@ -57,13 +57,13 @@
       <div class="vaccine-card">
         <form id="lead-form" class="faq__form" novalidate>
           <label for="name">Ваше имя</label>
-          <input type="text" id="name" name="name" required minlength="2" maxlength="60" placeholder="ФИО">
+          <input type="text" id="name" name="name" required minlength="2" maxlength="60" placeholder="Имя">
 
           <label for="phone">Телефон</label>
           <input type="tel" id="phone" name="phone" required placeholder="+7XXXXXXXXXX">
 
           <label for="email">E-mail (необязательно)</label>
-          <input type="email" id="email" name="email" placeholder="почта">
+          <input type="email" id="email" name="email" placeholder="pochta@example.com">
 
           <label>Ваш питомец</label>
           <div class="pet-options">
@@ -129,6 +129,7 @@
   </footer>
 
   <script src="js/analytics.js"></script>
+  <script>window.LEADS_ENDPOINT = 'https://script.google.com/macros/s/XXXXXXXX/exec';</script>
   <script src="js/form.js"></script>
 </body>
 </html>

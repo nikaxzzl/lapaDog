@@ -2,8 +2,6 @@
 (function () {
   'use strict';
 
-  var YEAR_WEEKS = 52;
-
   var VACCINES = {
     cat: [
       [8,  'Комплексная вакцинация (1-я)'],
@@ -39,7 +37,6 @@
 
     list.innerHTML = '';
 
-    // «Другое» — только консультация
     if (type === 'other') {
       list.innerHTML = '<li>Для этого вида животного нужна консультация врача — запишитесь на приём.</li>';
       return;
@@ -52,7 +49,7 @@
     plan.forEach(function (item) {
       var week = item[0];
       var name = item[1];
-      if (week < age) return; // уже прошло
+      if (week < age) return;
 
       var date = new Date(today);
       date.setDate(date.getDate() + (week - age) * 7);
@@ -65,22 +62,27 @@
     }
   }
 
-  function track() {
-    if (window.LapaAnalytics) {
-      window.LapaAnalytics.vaccineCalc(typeEl.value, parseInt(ageEl.value, 10) || 0);
-    }
+  var timer = null;
+  function trackDebounced() {
+    clearTimeout(timer);
+    timer = setTimeout(function () {
+      if (window.LapaAnalytics) {
+        window.LapaAnalytics.vaccineCalc(typeEl.value, parseInt(ageEl.value, 10) || 0);
+      }
+    }, 600);
   }
 
   function onChange() {
     render();
-    track();
+    trackDebounced();
   }
 
   typeEl.addEventListener('change', onChange);
   ageEl.addEventListener('input', onChange);
   ageEl.addEventListener('change', onChange);
 
-  // Первичный рендер + событие vaccine_calc
   render();
-  track();
+  if (window.LapaAnalytics) {
+    window.LapaAnalytics.vaccineCalc(typeEl.value, parseInt(ageEl.value, 10) || 0);
+  }
 })();
