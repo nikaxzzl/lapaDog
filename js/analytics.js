@@ -79,9 +79,14 @@
             params.promo_code = code;
         }
 
+        // ТЗ 4.3: значения параметров не длиннее 100 символов
+        for (var p in params) {
+            if (params[p] != null) params[p] = String(params[p]).slice(0, 100);
+        }
+
         send(event, params);
     });
-
+    
     // ---------- Выбор питомца на главной ----------
     document.addEventListener('click', function (e) {
         var el = e.target.closest('[data-event="pet_type_select"]');
