@@ -1,32 +1,25 @@
 /* ================= ПЕРЕМЕННЫЕ ================= */
 :root {
-  /* Цвета, подобранные под логотип */
-  --color-primary: #7BC5C8;       /* Нежно-бирюзовый (мятный) */
-  --color-primary-dark: #5BA8AB;  /* Чуть темнее для ховеров */
-  --color-accent: #F0F8F8;        /* Очень светлый мятный фон */
-  --color-accent-yellow: #F5B041; /* Акцент для скидок */
-  --color-bg: #F8F9FA;
+  /* Фирменные цвета по ТЗ, раздел 2 */
+  --color-primary: #2E8B57;        /* Зелёный */
+  --color-primary-dark: #23302A;   /* Графит — для заголовков и тёмных акцентов */
+  --color-accent: #F5F8F4;         /* Светлый фон */
+  --color-accent-yellow: #F2B33D;  /* Тёплый жёлтый — скидки, бейджи */
+  --color-bg: #F5F8F4;
   --color-white: #FFFFFF;
-  --color-text: #1A1A1A;
-  --color-text-muted: #7A7A7A;
-  
+  --color-text: #23302A;
+  --color-text-muted: #5C6B62;
+
   --font-main: 'Rubik', sans-serif;
-  
+
   --radius-sm: 10px;
   --radius-md: 20px;
   --radius-lg: 32px;
   --radius-pill: 50px;
-  
-  --shadow-card: 0 10px 30px rgba(123, 197, 200, 0.1);
-  --shadow-hover: 0 20px 40px rgba(123, 197, 200, 0.2);
-  --transition: all 0.3s ease;
-}
 
-/* ================= БАЗА ================= */
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+  --shadow-card: 0 10px 30px rgba(46, 139, 87, 0.10);
+  --shadow-hover: 0 20px 40px rgba(46, 139, 87, 0.20);
+  --transition: all 0.3s ease;
 }
 
 body {
@@ -92,8 +85,8 @@ img {
 }
 
 .badge--accent {
-  background-color: var(--color-primary);
-  color: var(--color-white);
+  background-color: var(--color-accent-yellow);
+  color: var(--color-primary-dark);
   position: absolute;
   top: 15px;
   left: 15px;
