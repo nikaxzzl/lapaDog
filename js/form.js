@@ -1,10 +1,26 @@
+// js/form.js
+// Отправка заявки в Google Apps Script + сохранение UTM + события GA4.
+
 document.addEventListener('DOMContentLoaded', function () {
   var form = document.getElementById('lead-form');
   if (!form) return;
 
   var btn = form.querySelector('button[type="submit"]');
 
-  // Событие form_start — первое взаимодействие
+  // ---------- UTM: читаем из адреса и храним в sessionStorage ----------
+  var UTM_KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content'];
+  var params = new URLSearchParams(window.location.search);
+
+  UTM_KEYS.forEach(function (key) {
+    var value = params.get(key);
+    if (value) sessionStorage.setItem(key, value);
+  });
+
+  function getUtm(key) {
+    return sessionStorage.getItem(key) || '';
+  }
+
+  // ---------- form_start: первое взаимодействие ----------
   var formStarted = false;
   form.addEventListener('input', function () {
     if (!formStarted) {
@@ -13,52 +29,97 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 
-  form.addEventListener('submit', function (e) {
-    e.preventDefault();
-
-    
+  // ---------- Валидация ----------
+  function validate() {
     var name = form.name.value.trim();
-    if (name.length < 2) {
-      showError(form.name, 'Введите имя (минимум 2 символа)');
+    if (name.length < 2 || name.length > 60) {
+      showError(form.name, 'Введите имя (от 2 до 60 символов)');
       if (window.LapaAnalytics) window.LapaAnalytics.formError('name', 'validation');
-      return;
+      return false;
     }
 
-    // 2. Проверка телефона
     var phone = form.phone.value.trim();
-    var phoneDigits = phone.replace(/\D/g, '');
-    if (phoneDigits.length < 11) {
+    if (!/^\+7\d{10}$/.test(phone)) {
       showError(form.phone, 'Введите телефон в формате +7XXXXXXXXXX');
       if (window.LapaAnalytics) window.LapaAnalytics.formError('phone', 'validation');
-      return;
+      return false;
     }
 
-    // 3. Проверка согласия
+    var email = form.email.value.trim();
+    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      showError(form.email, 'Проверьте формат e-mail');
+      if (window.LapaAnalytics) window.LapaAnalytics.formError('email', 'validation');
+      return false;
+    }
+
     if (!form.consent.checked) {
       if (window.LapaAnalytics) window.LapaAnalytics.formError('consent', 'validation');
-      alert('Пожалуйста, согласитесь с политикой конфиденциальности');
-      return;
+      showError(form.consent, 'Согласитесь с политикой конфиденциальности');
+      return false;
     }
 
+    return true;
+  }
+
+  // ---------- Отправка ----------
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    if (!validate()) return;
 
     var requestId = 'REQ-' + (crypto.randomUUID
       ? crypto.randomUUID()
       : Date.now() + '-' + Math.random().toString(36).slice(2));
 
+    var payload = {
+      request_id: requestId,
+      name: form.name.value.trim(),
+      phone: form.phone.value.trim(),
+      email: form.email.value.trim(),
+      pet_type: form.pet_type.value,
+      service: form.service.value,
+      utm_source: getUtm('utm_source') || 'direct',
+      utm_medium: getUtm('utm_medium') || 'none',
+      utm_campaign: getUtm('utm_campaign') || 'not_set',
+      utm_content: getUtm('utm_content') || 'not_set'
+    };
 
-    if (window.LapaAnalytics) {
-      window.LapaAnalytics.formSubmit('lead_form');
-      window.LapaAnalytics.generateLead(
-        form.pet_type.value,
-        form.service.value,
-        sessionStorage.getItem('utm_source') || 'direct'
-      );
-    }
+    // Блокируем кнопку
+    btn.disabled = true;
+    btn.textContent = 'Отправляем…';
 
-    window.location.href = 'thanks.html?request_id=' + encodeURIComponent(requestId);
+    if (window.LapaAnalytics) window.LapaAnalytics.formSubmit('lead_form');
+
+    fetch(LEADS_ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload)
+    })
+      .then(function (res) { return res.json(); })
+      .then(function (data) {
+        if (data && data.ok === true) {
+          if (window.LapaAnalytics) {
+            window.LapaAnalytics.generateLead(
+              payload.pet_type,
+              payload.service,
+              payload.utm_source
+            );
+          }
+          window.location.href = 'thanks.html?request_id=' + encodeURIComponent(requestId);
+        } else {
+          throw new Error((data && data.error) || 'server');
+        }
+      })
+      .catch(function (err) {
+        if (window.LapaAnalytics) {
+          window.LapaAnalytics.formError('form', 'server');
+        }
+        showError(btn, 'Не удалось отправить заявку. Попробуйте ещё раз или позвоните нам.');
+        btn.disabled = false;
+        btn.textContent = 'Отправить заявку';
+      });
   });
 
-
+  // ---------- Показ ошибки ----------
   function showError(input, message) {
     input.style.borderColor = '#e74c3c';
     var next = input.nextElementSibling;
@@ -74,7 +135,6 @@ document.addEventListener('DOMContentLoaded', function () {
       input.parentNode.insertBefore(err, input.nextSibling);
     }
     input.focus();
-
 
     input.addEventListener('input', function handler() {
       input.style.borderColor = '';
