@@ -81,8 +81,6 @@
   ageEl.addEventListener('input', onChange);
   ageEl.addEventListener('change', onChange);
 
+  // Первичный рендер без отправки события — иначе в DebugView шум
   render();
-  if (window.LapaAnalytics) {
-    window.LapaAnalytics.vaccineCalc(typeEl.value, parseInt(ageEl.value, 10) || 0);
-  }
 })();

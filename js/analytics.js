@@ -6,9 +6,14 @@
     'use strict';
 
     // ---------- Отправка ----------
-    function send(event, params) {
-        if (typeof gtag !== 'function') return;
-        gtag('event', event, params || {});
+    function send(event, params, callback) {
+        if (typeof gtag !== 'function') {
+            if (callback) callback();
+            return;
+        }
+        gtag('event', event, Object.assign({}, params || {}, {
+            event_callback: callback || undefined
+        }));
     }
 
     // ---------- Публичный API для form.js / vaccines.js ----------
@@ -20,12 +25,13 @@
         formSubmit: function (id) {
             send('form_submit', { form_id: id || 'lead_form' });
         },
-        generateLead: function (pet, service, source) {
+        // callback вызывается после отправки — используется перед редиректом
+        generateLead: function (pet, service, source, callback) {
             send('generate_lead', {
                 lead_pet_type: pet,
                 lead_service: service,
                 lead_source: source
-            });
+            }, callback);
         },
         formError: function (field, type) {
             send('form_error', { field_name: field, error_type: type });
@@ -37,7 +43,10 @@
 
     // ---------- Делегирование кликов ----------
     document.addEventListener('click', function (e) {
-        var el = e.target.closest('[data-event]');
+        var target = e.target;
+        if (!target || !target.closest) return;
+
+        var el = target.closest('[data-event]');
         if (!el) return;
 
         var event = el.dataset.event;
@@ -64,19 +73,32 @@
             if (!params.network) return;
             params.page_section = params.page_section || 'footer';
         }
+        if (event === 'select_service') {
+            if (!params.service_name) return;
+            // price_from берём из data-price-from, если есть
+        }
 
         // ---------- Особые случаи ----------
         if (event === 'file_download') {
             if (!el.href) return;
-            params.file_name = el.href.split('/').pop();
-            params.file_extension = 'pdf';
+            var fileName = el.href.split('/').pop().split('?')[0];
+            params.file_name = fileName;
+            var dot = fileName.lastIndexOf('.');
+            params.file_extension = dot > -1 ? fileName.slice(dot + 1).toLowerCase() : '';
         }
+
         if (event === 'promo_copy') {
             var code = el.dataset.promoCode || 'VAKCINA';
-            if (navigator.clipboard) {
-                navigator.clipboard.writeText(code).catch(function () {});
+            var fire = function () {
+                params.promo_code = code;
+                send('promo_copy', params);
+            };
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(code).then(fire).catch(fire);
+            } else {
+                fire();
             }
-            params.promo_code = code;
+            return; // не отправляем второй раз ниже
         }
 
         // ТЗ 4.3: значения параметров не длиннее 100 символов
@@ -86,10 +108,13 @@
 
         send(event, params);
     });
-    
+
     // ---------- Выбор питомца на главной ----------
     document.addEventListener('click', function (e) {
-        var el = e.target.closest('[data-event="pet_type_select"]');
+        var target = e.target;
+        if (!target || !target.closest) return;
+
+        var el = target.closest('[data-event="pet_type_select"]');
         if (!el) return;
 
         document.querySelectorAll('.pet-select__card').forEach(function (card) {

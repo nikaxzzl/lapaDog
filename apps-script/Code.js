@@ -124,9 +124,19 @@ function json(obj) {
 // ============================================================
 function setupSheet() {
   var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-  var sheet = ss.getSheetByName(SHEET_NAME) || ss.insertSheet(SHEET_NAME);
+  var sheet = ss.getSheetByName(SHEET_NAME);
 
+  if (sheet && sheet.getLastRow() > 1) {
+    var ok = SpreadsheetApp.getUi().alert(
+      'В листе «leads» уже есть данные. Очистить и пересоздать?',
+      SpreadsheetApp.getUi().ButtonSet.YES_NO
+    );
+    if (ok !== SpreadsheetApp.getUi().Button.YES) return;
+  }
+
+  sheet = sheet || ss.insertSheet(SHEET_NAME);
   sheet.clear();
+  // …дальше без изменений
 
   // Заголовки
   sheet.getRange(1, 1, 1, HEADERS.length).setValues([HEADERS]);
@@ -223,8 +233,8 @@ function setupCrmImport() {
     '=IFERROR(Leads!F2,"")',
     // H: service
     '=IFERROR(Leads!G2,"")',
-    // I: deal_stage (по таблице 9.1)
-    '=IFERROR(IFS(Leads!L2="new","New lead",Leads!L2="contacted","Contacted",Leads!L2="appointment","Appointment booked",Leads!L2="visited","Closed won",Leads!L2="lost","Closed lost"),"")',
+    // I: deal_stage (по таблице 9.1) — через VLOOKUP, совместимо со старыми Sheets
+    '=IFERROR(VLOOKUP(Leads!L2,{"new","New lead";"contacted","Contacted";"appointment","Appointment booked";"visited","Closed won";"lost","Closed lost"},2,FALSE),"")',
     // J: deal_name по шаблону «Имя — вид — услуга»
     '=IFERROR(D2&" — "&G2&" — "&H2,"")',
     // K..N: UTM

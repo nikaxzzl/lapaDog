@@ -32,29 +32,34 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // ---------- Валидация ----------
   function validate() {
-    var name = form.name.value.trim();
+    var nameEl = form.querySelector('[name="name"]');
+    var phoneEl = form.querySelector('[name="phone"]');
+    var emailEl = form.querySelector('[name="email"]');
+    var consentEl = form.querySelector('[name="consent"]');
+
+    var name = nameEl.value.trim();
     if (name.length < 2 || name.length > 60) {
-      showError(form.name, 'Введите имя (от 2 до 60 символов)');
+      showError(nameEl, 'Введите имя (от 2 до 60 символов)');
       if (window.LapaAnalytics) window.LapaAnalytics.formError('name', 'validation');
       return false;
     }
 
-    var phone = form.phone.value.trim();
+    var phone = phoneEl.value.trim();
     if (!/^\+7\d{10}$/.test(phone)) {
-      showError(form.phone, 'Введите телефон в формате +7XXXXXXXXXX');
+      showError(phoneEl, 'Введите телефон в формате +7XXXXXXXXXX');
       if (window.LapaAnalytics) window.LapaAnalytics.formError('phone', 'validation');
       return false;
     }
 
-    var email = form.email.value.trim();
+    var email = emailEl.value.trim();
     if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      showError(form.email, 'Проверьте формат e-mail');
+      showError(emailEl, 'Проверьте формат e-mail');
       if (window.LapaAnalytics) window.LapaAnalytics.formError('email', 'validation');
       return false;
     }
 
-    if (!form.consent.checked) {
-      showError(form.consent, 'Согласитесь с политикой конфиденциальности');
+    if (!consentEl.checked) {
+      showError(consentEl, 'Согласитесь с политикой конфиденциальности');
       if (window.LapaAnalytics) window.LapaAnalytics.formError('consent', 'validation');
       return false;
     }
@@ -79,11 +84,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
     var payload = {
       request_id: requestId,
-      name: form.name.value.trim(),
-      phone: form.phone.value.trim(),
-      email: form.email.value.trim(),
-      pet_type: form.pet_type.value,
-      service: form.service.value,
+      name: form.querySelector('[name="name"]').value.trim(),
+      phone: form.querySelector('[name="phone"]').value.trim(),
+      email: form.querySelector('[name="email"]').value.trim(),
+      pet_type: form.querySelector('[name="pet_type"]:checked').value,
+      service: form.querySelector('[name="service"]').value,
       utm_source: getUtm('utm_source', 'direct'),
       utm_medium: getUtm('utm_medium', 'none'),
       utm_campaign: getUtm('utm_campaign', 'not_set'),
@@ -103,14 +108,19 @@ document.addEventListener('DOMContentLoaded', function () {
       .then(function (res) { return res.json(); })
       .then(function (data) {
         if (data && data.ok === true) {
+          var go = function () {
+            window.location.href = 'thanks.html?request_id=' + encodeURIComponent(requestId);
+          };
           if (window.LapaAnalytics) {
             window.LapaAnalytics.generateLead(
               payload.pet_type,
               payload.service,
-              payload.utm_source
+              payload.utm_source,
+              go
             );
+          } else {
+            go();
           }
-          window.location.href = 'thanks.html?request_id=' + encodeURIComponent(requestId);
         } else {
           throw new Error((data && data.error) || 'server');
         }
