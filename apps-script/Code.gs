@@ -9,6 +9,7 @@
  *   3. Запустить функцию setupSheet() из редактора Apps Script.
  */
 
+// ⚠️ ЗАМЕНИТЕ НА ID ВАШЕЙ ТАБЛИЦЫ
 var SPREADSHEET_ID = 'ВСТАВЬТЕ_ID_ТАБЛИЦЫ';
 var SHEET_NAME = 'leads';
 
@@ -38,21 +39,24 @@ function doPost(e) {
       return json({ ok: false, error: 'invalid_json' });
     }
 
+    if (SPREADSHEET_ID === 'ВСТАВЬТЕ_ID_ТАБЛИЦЫ') {
+      return json({ ok: false, error: 'server: SPREADSHEET_ID is not set' });
+    }
+
     var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
     var sheet = ss.getSheetByName(SHEET_NAME);
     if (!sheet) return json({ ok: false, error: 'sheet_not_found' });
 
-    // 1. Валидация обязательных полей, форматов и списков
+    // 1. Валидация
     var err = validate(data);
     if (err) return json({ ok: false, error: err });
 
-    // 2. Дедупликация по request_id
+    // 2. Дедупликация
     if (requestIdExists(sheet, data.request_id)) {
       return json({ ok: false, error: 'duplicate_request_id' });
     }
 
-    // 3. Запись. created_at и status = new ставит приёмник.
-    //    status, присланный из браузера, игнорируется.
+    // 3. Запись
     var row = [
       String(data.request_id),
       new Date(),
@@ -98,7 +102,7 @@ function validate(d) {
 }
 
 // ============================================================
-// ПРОВЕРКА ДУБЛИКАТА request_id
+// ПРОВЕРКА ДУБЛИКАТА
 // ============================================================
 function requestIdExists(sheet, requestId) {
   var lastRow = sheet.getLastRow();
@@ -120,9 +124,14 @@ function json(obj) {
 }
 
 // ============================================================
-// ИНИЦИАЛИЗАЦИЯ ТАБЛИЦЫ (запустить один раз вручную)
+// ИНИЦИАЛИЗАЦИЯ ТАБЛИЦЫ
 // ============================================================
 function setupSheet() {
+  if (SPREADSHEET_ID === 'ВСТАВЬТЕ_ID_ТАБЛИЦЫ') {
+    SpreadsheetApp.getUi().alert('Сначала укажите SPREADSHEET_ID в начале кода.');
+    return;
+  }
+
   var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   var sheet = ss.getSheetByName(SHEET_NAME);
 
@@ -136,7 +145,6 @@ function setupSheet() {
 
   sheet = sheet || ss.insertSheet(SHEET_NAME);
   sheet.clear();
-  // …дальше без изменений
 
   // Заголовки
   sheet.getRange(1, 1, 1, HEADERS.length).setValues([HEADERS]);
@@ -147,16 +155,14 @@ function setupSheet() {
   sheet.setFrozenRows(1);
   sheet.autoResizeColumns(1, HEADERS.length);
 
-  // Выпадающий список status (столбец 12)
+  // Выпадающий список status
   var statusRule = SpreadsheetApp.newDataValidation()
     .requireValueInList(ALLOWED_STATUS, true)
     .setAllowInvalid(false)
     .build();
   sheet.getRange(2, 12, 1000, 1).setDataValidation(statusRule);
 
-  // Условное форматирование: пустые обязательные ячейки
-  // Обязательные столбцы: 1 (request_id), 2 (created_at), 3 (name),
-  // 4 (phone), 6 (pet_type), 7 (service), 8..11 (utm_*), 12 (status)
+  // Подсветка пустых обязательных ячеек
   var requiredColumns = [1, 2, 3, 4, 6, 7, 8, 9, 10, 11, 12];
   var emptyRule = SpreadsheetApp.newConditionalFormatRule()
     .whenFormulaSatisfied('=AND($A2<>"", OR(' +
@@ -169,7 +175,7 @@ function setupSheet() {
     .build();
   sheet.setConditionalFormatRules([emptyRule]);
 
-  // Условное форматирование: дубликаты request_id (столбец 1)
+  // Подсветка дубликатов request_id
   var dupRule = SpreadsheetApp.newConditionalFormatRule()
     .whenFormulaSatisfied('=AND($A2<>"", COUNTIF($A:$A, $A2) > 1)')
     .setBackground('#F9CB9C')
@@ -181,7 +187,7 @@ function setupSheet() {
 }
 
 // ============================================================
-// ВСПОМОГАТЕЛЬНОЕ: номер столбца → буква (1 → A, 12 → L)
+// НОМЕР СТОЛБЦА → БУКВА
 // ============================================================
 function columnLetter(num) {
   var letter = '';
@@ -194,14 +200,18 @@ function columnLetter(num) {
 }
 
 // ============================================================
-// ЛИСТ crm_import (раздел 6.4 ТЗ) — запустить один раз после setupSheet
+// ЛИСТ crm_import
 // ============================================================
 function setupCrmImport() {
+  if (SPREADSHEET_ID === 'ВСТАВЬТЕ_ID_ТАБЛИЦЫ') {
+    SpreadsheetApp.getUi().alert('Сначала укажите SPREADSHEET_ID в начале кода.');
+    return;
+  }
+
   var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   var sheet = ss.getSheetByName('crm_import') || ss.insertSheet('crm_import');
   sheet.clear();
 
-  // Заголовки
   var headers = [
     'request_id', 'created_at', 'email', 'first_name', 'last_name',
     'phone_e164', 'pet_type', 'service', 'deal_stage', 'deal_name',
@@ -214,37 +224,23 @@ function setupCrmImport() {
     .setFontColor('#FFFFFF');
   sheet.setFrozenRows(1);
 
-  // Формулы: первая строка данных — 2-я строка листа
-  // Разделение имени: всё до первого пробела — first_name, остальное — last_name
   var formulas = [
-    // A: request_id
     '=IFERROR(Leads!A2,"")',
-    // B: created_at
     '=IFERROR(Leads!B2,"")',
-    // C: email
     '=IFERROR(Leads!E2,"")',
-    // D: first_name
     '=IFERROR(IF(Leads!C2="","",TRIM(LEFT(Leads!C2,FIND(" ",Leads!C2&" ")-1))),"")',
-    // E: last_name
     '=IFERROR(IF(Leads!C2="","",TRIM(SUBSTITUTE(Leads!C2,D2,""))),"")',
-    // F: phone_e164 (+7XXXXXXXXXX)
     '=IFERROR(IF(Leads!D2="","",IF(LEFT(Leads!D2,2)="+7",Leads!D2,"+7"&SUBSTITUTE(Leads!D2,"+7",""))),"")',
-    // G: pet_type
     '=IFERROR(Leads!F2,"")',
-    // H: service
     '=IFERROR(Leads!G2,"")',
-    // I: deal_stage (по таблице 9.1) — через VLOOKUP, совместимо со старыми Sheets
     '=IFERROR(VLOOKUP(Leads!L2,{"new","New lead";"contacted","Contacted";"appointment","Appointment booked";"visited","Closed won";"lost","Closed lost"},2,FALSE),"")',
-    // J: deal_name по шаблону «Имя — вид — услуга»
-    '=IFERROR(D2&" — "&G2&" — "&H2,"")',
-    // K..N: UTM
+    '=IFERROR(IF(D2="","",D2&" — "&G2&" — "&H2),"")',
     '=IFERROR(Leads!H2,"")',
     '=IFERROR(Leads!I2,"")',
     '=IFERROR(Leads!J2,"")',
     '=IFERROR(Leads!K2,"")'
   ];
 
-  // Применяем формулы на 1000 строк
   for (var i = 0; i < formulas.length; i++) {
     var col = columnLetter(i + 1);
     sheet.getRange(col + '2:' + col + '1000').setFormula(formulas[i]);
