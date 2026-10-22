@@ -60,7 +60,7 @@
           <input type="text" id="name" name="name" required minlength="2" maxlength="60" placeholder="Имя">
 
           <label for="phone">Телефон</label>
-          <input type="tel" id="phone" name="phone" required placeholder="+7XXXXXXXXXX">
+          <input type="tel" id="phone" name="phone" required placeholder="+79001234567">
 
           <label for="email">E-mail (необязательно)</label>
           <input type="email" id="email" name="email" placeholder="pochta@example.com">
@@ -85,7 +85,7 @@
 
           <label class="consent-label">
             <input type="checkbox" name="consent" required>
-            Согласен с <a href="privacy.html" target="_blank">политикой конфиденциальности</a>
+            <span>Согласен с <a href="privacy.html" target="_blank">политикой конфиденциальности</a></span>
           </label>
 
           <button type="submit" class="btn btn--primary"
@@ -129,7 +129,12 @@
   </footer>
 
   <script src="js/analytics.js"></script>
-  <script>window.LEADS_ENDPOINT = 'https://script.google.com/macros/s/XXXXXXXX/exec';</script>
+  
+  <!-- ⚠️ ЗАМЕНИТЕ ССЫЛКУ НИЖЕ НА ВАШУ (из шага "Развернуть" в Apps Script) -->
+  <script>
+    window.LEADS_ENDPOINT = 'ВАША_ССЫЛКА_ИЗ_APPS_SCRIPT';
+  </script>
+  
   <script src="js/form.js"></script>
 </body>
 </html>

@@ -1,6 +1,3 @@
-// js/form.js
-// Валидация, сохранение UTM, отправка в Apps Script, события GA4.
-
 document.addEventListener('DOMContentLoaded', function () {
   var form = document.getElementById('lead-form');
   if (!form) return;
@@ -8,10 +5,8 @@ document.addEventListener('DOMContentLoaded', function () {
   var btn = form.querySelector('button[type="submit"]');
   var endpoint = window.LEADS_ENDPOINT || '';
 
-  // ---------- UTM: сохраняем в sessionStorage ----------
   var UTM_KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content'];
   var params = new URLSearchParams(window.location.search);
-
   UTM_KEYS.forEach(function (key) {
     var value = params.get(key);
     if (value) sessionStorage.setItem(key, value);
@@ -21,7 +16,6 @@ document.addEventListener('DOMContentLoaded', function () {
     return sessionStorage.getItem(key) || fallback;
   }
 
-  // ---------- form_start ----------
   var formStarted = false;
   form.addEventListener('input', function () {
     if (!formStarted) {
@@ -30,29 +24,25 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 
-  // ---------- Валидация ----------
   function validate() {
     var nameEl = form.querySelector('[name="name"]');
     var phoneEl = form.querySelector('[name="phone"]');
     var emailEl = form.querySelector('[name="email"]');
     var consentEl = form.querySelector('[name="consent"]');
 
-    var name = nameEl.value.trim();
-    if (name.length < 2 || name.length > 60) {
+    if (nameEl.value.trim().length < 2 || nameEl.value.trim().length > 60) {
       showError(nameEl, 'Введите имя (от 2 до 60 символов)');
       if (window.LapaAnalytics) window.LapaAnalytics.formError('name', 'validation');
       return false;
     }
 
-    var phone = phoneEl.value.trim();
-    if (!/^\+7\d{10}$/.test(phone)) {
-      showError(phoneEl, 'Введите телефон в формате +7XXXXXXXXXX');
+    if (!/^\+7\d{10}$/.test(phoneEl.value.trim())) {
+      showError(phoneEl, 'Введите телефон в формате +7XXXXXXXXXX (например, +79001234567)');
       if (window.LapaAnalytics) window.LapaAnalytics.formError('phone', 'validation');
       return false;
     }
 
-    var email = emailEl.value.trim();
-    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    if (emailEl.value.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailEl.value.trim())) {
       showError(emailEl, 'Проверьте формат e-mail');
       if (window.LapaAnalytics) window.LapaAnalytics.formError('email', 'validation');
       return false;
@@ -63,22 +53,20 @@ document.addEventListener('DOMContentLoaded', function () {
       if (window.LapaAnalytics) window.LapaAnalytics.formError('consent', 'validation');
       return false;
     }
-
     return true;
   }
 
-  // ---------- Отправка ----------
   form.addEventListener('submit', function (e) {
     e.preventDefault();
     if (!validate()) return;
 
-    if (!endpoint) {
-      showError(btn, 'Форма временно недоступна. Позвоните нам.');
-      if (window.LapaAnalytics) window.LapaAnalytics.formError('form', 'server');
+    if (!endpoint || endpoint.indexOf('ВАША_ССЫЛКА') !== -1) {
+      showError(btn, 'Форма временно недоступна. Позвоните нам: +7 900 777-90-90');
+      console.error('LEADS_ENDPOINT не настроен. Вставьте URL веб-приложения Apps Script.');
       return;
     }
 
-    var requestId = 'REQ-' + (crypto.randomUUID
+    var requestId = 'REQ-' + (window.crypto && crypto.randomUUID
       ? crypto.randomUUID()
       : Date.now() + '-' + Math.random().toString(36).slice(2));
 
@@ -97,7 +85,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     btn.disabled = true;
     btn.textContent = 'Отправляем…';
-
     if (window.LapaAnalytics) window.LapaAnalytics.formSubmit('lead_form');
 
     fetch(endpoint, {
@@ -112,12 +99,7 @@ document.addEventListener('DOMContentLoaded', function () {
             window.location.href = 'thanks.html?request_id=' + encodeURIComponent(requestId);
           };
           if (window.LapaAnalytics) {
-            window.LapaAnalytics.generateLead(
-              payload.pet_type,
-              payload.service,
-              payload.utm_source,
-              go
-            );
+            window.LapaAnalytics.generateLead(payload.pet_type, payload.service, payload.utm_source, go);
           } else {
             go();
           }
@@ -125,17 +107,15 @@ document.addEventListener('DOMContentLoaded', function () {
           throw new Error((data && data.error) || 'server');
         }
       })
-      .catch(function () {
-        if (window.LapaAnalytics) {
-          window.LapaAnalytics.formError('form', 'server');
-        }
+      .catch(function (err) {
+        console.error('Ошибка отправки:', err);
+        if (window.LapaAnalytics) window.LapaAnalytics.formError('form', 'server');
         showError(btn, 'Не удалось отправить заявку. Попробуйте ещё раз или позвоните нам.');
         btn.disabled = false;
         btn.textContent = 'Отправить заявку';
       });
   });
 
-  // ---------- Показ ошибки ----------
   function showError(input, message) {
     input.style.borderColor = '#e74c3c';
     var next = input.nextElementSibling;
