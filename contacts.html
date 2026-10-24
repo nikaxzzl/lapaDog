@@ -5,16 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Запись на приём — ветклиника «Лападок»</title>
   <meta name="description" content="Записаться в ветклинику «Лападок» онлайн. Телефон, адрес, форма записи.">
-  <meta property="og:title" content="Запись на приём — Лападок">
-  <meta property="og:description" content="Записаться в ветклинику онлайн.">
-  <meta property="og:image" content="img/priem.png">
-  <meta property="og:type" content="website">
   <link rel="icon" href="img/log.ico">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
 
+  <!-- Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-XVT5FS2HTK"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -43,7 +40,7 @@
           <li><a href="contacts.html">Контакты</a></li>
         </ul>
       </nav>
-      <a href="tel:+79007779090" class="header__phone" data-event="contact_click">+7 900 777-90-90</a>
+      <a href="tel:+79007779090" class="header__phone" data-event="contact_click" data-contact-type="phone">+7 900 777-90-90</a>
     </div>
   </header>
 
@@ -55,15 +52,26 @@
       </div>
 
       <div class="vaccine-card">
-        <form id="lead-form" class="faq__form" novalidate>
+        <form id="leadForm" class="faq__form" novalidate>
+          
+          <!-- Скрытые поля (ТЗ 6.3) -->
+          <input type="hidden" name="request_id" id="request_id">
+          <input type="hidden" name="utm_source" id="utm_source">
+          <input type="hidden" name="utm_medium" id="utm_medium">
+          <input type="hidden" name="utm_campaign" id="utm_campaign">
+          <input type="hidden" name="utm_content" id="utm_content">
+
           <label for="name">Ваше имя</label>
           <input type="text" id="name" name="name" required minlength="2" maxlength="60" placeholder="Имя">
+          <span class="error-text" data-for="name"></span>
 
           <label for="phone">Телефон</label>
           <input type="tel" id="phone" name="phone" required placeholder="+79001234567">
+          <span class="error-text" data-for="phone"></span>
 
           <label for="email">E-mail (необязательно)</label>
           <input type="email" id="email" name="email" placeholder="pochta@example.com">
+          <span class="error-text" data-for="email"></span>
 
           <label>Ваш питомец</label>
           <div class="pet-options">
@@ -72,9 +80,11 @@
             <label><input type="radio" name="pet_type" value="rabbit"> Кролик</label>
             <label><input type="radio" name="pet_type" value="other"> Другое</label>
           </div>
+          <span class="error-text" data-for="pet_type"></span>
 
           <label for="service">Услуга</label>
           <select id="service" name="service" required>
+            <option value="">Выберите...</option>
             <option value="consult">Консультация</option>
             <option value="vaccine">Вакцинация</option>
             <option value="chip">Чипирование</option>
@@ -82,11 +92,13 @@
             <option value="analysis">Анализы</option>
             <option value="home_visit">Вызов врача на дом</option>
           </select>
+          <span class="error-text" data-for="service"></span>
 
           <label class="consent-label">
             <input type="checkbox" name="consent" required>
             <span>Согласен с <a href="privacy.html" target="_blank">политикой конфиденциальности</a></span>
           </label>
+          <span class="error-text" data-for="consent"></span>
 
           <button type="submit" class="btn btn--primary"
                   data-event="cta_click" data-button-name="contacts_submit" data-page-section="contacts">Отправить заявку</button>
@@ -117,12 +129,9 @@
     <div class="container footer__inner">
       <p>© 2026 ООО «Лападок». ИНН 9907 420 257.</p>
       <div class="footer__socials">
-        <a href="https://instagram.com/lapadok_vet" target="_blank" rel="noopener"
-           data-event="social_click" data-network="instagram" data-page-section="footer">Instagram</a>
-        <a href="https://vk.com/lapadok_vet" target="_blank" rel="noopener"
-           data-event="social_click" data-network="vk" data-page-section="footer">ВКонтакте</a>
-        <a href="https://t.me/lapadok_vet" target="_blank" rel="noopener"
-           data-event="social_click" data-network="telegram" data-page-section="footer">Telegram</a>
+        <a href="https://instagram.com/lapadok_vet" target="_blank" rel="noopener" data-event="social_click" data-network="instagram" data-page-section="footer">Instagram</a>
+        <a href="https://vk.com/lapadok_vet" target="_blank" rel="noopener" data-event="social_click" data-network="vk" data-page-section="footer">ВКонтакте</a>
+        <a href="https://t.me/lapadok_vet" target="_blank" rel="noopener" data-event="social_click" data-network="telegram" data-page-section="footer">Telegram</a>
       </div>
       <a href="privacy.html">Политика конфиденциальности</a>
     </div>
@@ -130,9 +139,14 @@
 
   <script src="js/analytics.js"></script>
   
-  <!-- ⚠️ ЗАМЕНИТЕ ССЫЛКУ НИЖЕ НА ВАШУ (из шага "Развернуть" в Apps Script) -->
+  <!-- Ссылка на ваш Apps Script -->
   <script>
-    window.LEADS_ENDPOINT = 'ВАША_ССЫЛКА_ИЗ_APPS_SCRIPT';
+    window.LEADS_ENDPOINT = 'https://script.google.com/macros/s/AKfycbxZJ7GAqYHetg5LZ3DR8TZPyuyxJQ1M4dJYzdk7sYrJZxgYfLmtg08EDMyEqpTmGzLl/exec';
+  </script>
+  
+  <script src="js/form.js"></script>
+  <script>
+    window.LEADS_ENDPOINT = 'https://script.google.com/macros/s/AKfycbzDu_4U8YcaCNk_yGuJCtcQyTZ3786ENf-yUKPbDSzlr5O6kmZmgEt5wELtj5CFethi/exec';
   </script>
   
   <script src="js/form.js"></script>

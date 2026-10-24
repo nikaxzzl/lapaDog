@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   var btn = form.querySelector('button[type="submit"]');
   var originalBtnText = btn.textContent;
-  var endpoint = 'https://script.google.com/macros/s/AKfycbxZJ7GAqYHetg5LZ3DR8TZPyuyxJQ1M4dJYzdk7sYrJZxgYfLmtg08EDMyEqpTmGzLl/exec';
+  var endpoint = window.LEADS_ENDPOINT || '';
 
   var UTM_KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content'];
   var params = new URLSearchParams(window.location.search);
@@ -73,14 +73,22 @@ document.addEventListener('DOMContentLoaded', function () {
     e.preventDefault();
     if (!validate()) return;
 
+    if (!endpoint || endpoint.indexOf('ВАША_ССЫЛКА') !== -1) {
+      showError(btn, 'Форма временно недоступна. Позвоните: +7 900 777-90-90');
+      return;
+    }
+
     var requestId = getRequestId();
+    
+    // Берем выбранную радиокнопку
+    var petEl = form.querySelector('[name="pet_type"]:checked');
 
     var payload = {
       request_id: requestId,
       name: form.querySelector('[name="name"]').value.trim(),
       phone: form.querySelector('[name="phone"]').value.trim(),
       email: form.querySelector('[name="email"]').value.trim(),
-      pet_type: form.querySelector('[name="pet_type"]').value,
+      pet_type: petEl ? petEl.value : 'other',
       service: form.querySelector('[name="service"]').value,
       utm_source: getUtm('utm_source', 'direct'),
       utm_medium: getUtm('utm_medium', 'none'),
@@ -115,25 +123,31 @@ document.addEventListener('DOMContentLoaded', function () {
       .catch(function (err) {
         console.error('Ошибка отправки:', err);
         if (window.LapaAnalytics) window.LapaAnalytics.formError('form', 'server');
-        showError(btn, 'Не удалось отправить заявку. Попробуйте ещё раз или позвоните нам.');
+        showError(btn, 'Не удалось отправить заявку. Попробуйте ещё раз.');
         btn.disabled = false;
         btn.textContent = originalBtnText;
       });
   });
 
   function showError(input, message) {
+    if (input.tagName === 'BUTTON') {
+      var formErr = document.getElementById('formError');
+      if (!formErr) {
+        formErr = document.createElement('div');
+        formErr.id = 'formError';
+        formErr.style.color = '#e74c3c';
+        formErr.style.fontSize = '14px';
+        formErr.style.marginTop = '10px';
+        form.appendChild(formErr);
+      }
+      formErr.textContent = message;
+      formErr.hidden = false;
+      return;
+    }
+
     var name = input.getAttribute('name');
     var errEl = form.querySelector('.error-text[data-for="' + name + '"]');
-
-    if (errEl) {
-      errEl.textContent = message;
-    } else if (input.tagName === 'BUTTON') {
-      var formErr = document.getElementById('formError');
-      if (formErr) {
-        formErr.hidden = false;
-        formErr.textContent = message;
-      }
-    }
+    if (errEl) errEl.textContent = message;
 
     if (input.style) input.style.borderColor = '#e74c3c';
     if (input.focus) input.focus();
