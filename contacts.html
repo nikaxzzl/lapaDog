@@ -1,140 +1,185 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Запись на приём — ветклиника «Лападок»</title>
-  <meta name="description" content="Записаться в ветклинику «Лападок» онлайн. Телефон, адрес, форма записи.">
-  <meta property="og:title" content="Запись на приём — Лападок">
-  <meta property="og:description" content="Записаться в ветклинику онлайн.">
-  <meta property="og:image" content="img/priem.png">
-  <meta property="og:type" content="website">
-  <link rel="icon" href="img/log.ico">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css">
-
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XVT5FS2HTK"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-XVT5FS2HTK');
-  </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Запись на приём и контакты — Ветеринарная клиника «Лападок»</title>
+    <meta name="description" content="Запишитесь на приём в ветеринарную клинику «Лападок». Контакты, телефон, мессенджеры и адрес на карте.">
+    
+    <!-- Подключение шрифтов (Rubik по ТЗ) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Подключение общих стилей -->
+    <link rel="stylesheet" href="css/style.css">
 </head>
-
 <body>
-  <header class="header">
-    <div class="container header__inner">
-      <a href="index.html" class="logo">
-        <img src="img/logo.png" alt="Лападок" width="50" height="50">
-        <div class="logo__text">
-          <span class="logo__title">ЛАПАДОК</span>
-          <span class="logo__subtitle">ветеринарная клиника 24/7</span>
+
+    <!-- ШАПКА САЙТА -->
+    <header class="site-header">
+        <div class="container header-inner">
+            <a href="index.html" class="logo">
+                <img src="img/logo.svg" alt="Логотип Лападок" width="40" height="40">
+                <span>Лападок</span>
+            </a>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="index.html">Главная</a></li>
+                    <li><a href="services.html">Услуги</a></li>
+                    <li><a href="doctors.html">Врачи</a></li>
+                    <li><a href="vaccines.html">Календарь прививок</a></li>
+                    <li><a href="pet-kit.html">Аптечка</a></li>
+                    <li><a href="contacts.html" class="active">Контакты</a></li>
+                </ul>
+            </nav>
+            <!-- Телефон в шапке (открывает набор номера) -->
+            <a href="tel:+79991234567" class="header-phone" data-event="contact_click" data-contact-type="phone">+7 (999) 123-45-67</a>
         </div>
-      </a>
-      <nav class="nav">
-        <ul class="nav__list">
-          <li><a href="services.html">Услуги</a></li>
-          <li><a href="doctors.html">Врачи</a></li>
-          <li><a href="vaccines.html">Прививки</a></li>
-          <li><a href="pet-kit.html">Аптечка</a></li>
-          <li><a href="contacts.html">Контакты</a></li>
-        </ul>
-      </nav>
-      <a href="tel:+79007779090" class="header__phone" data-event="contact_click">+7 900 777-90-90</a>
-    </div>
-  </header>
+    </header>
 
-  <main class="section">
-    <div class="container">
-      <div class="section__header text-center">
-        <h1 class="section__title">Запись на приём</h1>
-        <p class="hero__desc">Заполните форму, и мы свяжемся с вами в течение 15 минут</p>
-      </div>
+    <!-- ОСНОВНОЙ КОНТЕНТ -->
+    <main>
+        <section class="page-header">
+            <div class="container">
+                <h1>Запись на приём</h1>
+                <p>Оставьте заявку, и мы свяжемся с вами в ближайшее время.</p>
+            </div>
+        </section>
 
-      <div class="vaccine-card">
-        <form id="lead-form" class="faq__form" novalidate>
-          <label for="name">Ваше имя</label>
-          <input type="text" id="name" name="name" required minlength="2" maxlength="60" placeholder="Имя">
+        <!-- 1. ФОРМА ЗАПИСИ -->
+        <section id="form-section" class="form-section">
+            <div class="container">
+                <form id="leadForm" novalidate>
+                    
+                    <!-- Скрытые поля: заполняются JavaScript (js/form.js) -->
+                    <input type="hidden" name="request_id" id="request_id">
+                    <input type="hidden" name="utm_source" id="utm_source">
+                    <input type="hidden" name="utm_medium" id="utm_medium">
+                    <input type="hidden" name="utm_campaign" id="utm_campaign">
+                    <input type="hidden" name="utm_content" id="utm_content">
 
-          <label for="phone">Телефон</label>
-          <input type="tel" id="phone" name="phone" required placeholder="+79001234567">
+                    <div class="form-group">
+                        <label for="name">Ваше имя *</label>
+                        <input type="text" id="name" name="name" required minlength="2" maxlength="60" placeholder="Иван Иванов">
+                        <span class="error-text" data-for="name"></span>
+                    </div>
 
-          <label for="email">E-mail (необязательно)</label>
-          <input type="email" id="email" name="email" placeholder="pochta@example.com">
+                    <div class="form-group">
+                        <label for="phone">Телефон *</label>
+                        <input type="tel" id="phone" name="phone" required placeholder="+79991234567">
+                        <span class="error-text" data-for="phone"></span>
+                    </div>
 
-          <label>Ваш питомец</label>
-          <div class="pet-options">
-            <label><input type="radio" name="pet_type" value="cat" checked> Кошка</label>
-            <label><input type="radio" name="pet_type" value="dog"> Собака</label>
-            <label><input type="radio" name="pet_type" value="rabbit"> Кролик</label>
-            <label><input type="radio" name="pet_type" value="other"> Другое</label>
-          </div>
+                    <div class="form-group">
+                        <label for="email">E-mail (необязательно)</label>
+                        <input type="email" id="email" name="email" placeholder="example@mail.ru">
+                        <span class="error-text" data-for="email"></span>
+                    </div>
 
-          <label for="service">Услуга</label>
-          <select id="service" name="service" required>
-            <option value="consult">Консультация</option>
-            <option value="vaccine">Вакцинация</option>
-            <option value="chip">Чипирование</option>
-            <option value="sterilization">Стерилизация</option>
-            <option value="analysis">Анализы</option>
-            <option value="home_visit">Вызов врача на дом</option>
-          </select>
+                    <div class="form-group">
+                        <label for="pet_type">Вид животного *</label>
+                        <select id="pet_type" name="pet_type" required>
+                            <option value="">Выберите...</option>
+                            <option value="cat">Кошка</option>
+                            <option value="dog">Собака</option>
+                            <option value="rabbit">Кролик</option>
+                            <option value="other">Другое</option>
+                        </select>
+                        <span class="error-text" data-for="pet_type"></span>
+                    </div>
 
-          <label class="consent-label">
-            <input type="checkbox" name="consent" required>
-            <span>Согласен с <a href="privacy.html" target="_blank">политикой конфиденциальности</a></span>
-          </label>
+                    <div class="form-group">
+                        <label for="service">Услуга *</label>
+                        <select id="service" name="service" required>
+                            <option value="">Выберите...</option>
+                            <option value="consult">Первичный приём</option>
+                            <option value="vaccine">Комплексная вакцинация</option>
+                            <option value="chip">Чипирование</option>
+                            <option value="sterilization">Стерилизация</option>
+                            <option value="analysis">Анализы крови</option>
+                            <option value="home_visit">Вызов врача на дом</option>
+                        </select>
+                        <span class="error-text" data-for="service"></span>
+                    </div>
 
-          <button type="submit" class="btn btn--primary"
-                  data-event="cta_click" data-button-name="contacts_submit" data-page-section="contacts">Отправить заявку</button>
-        </form>
-      </div>
+                    <div class="form-group checkbox-group">
+                        <label>
+                            <input type="checkbox" name="consent" required>
+                            Согласен с <a href="privacy.html" target="_blank">политикой конфиденциальности</a> *
+                        </label>
+                        <span class="error-text" data-for="consent"></span>
+                    </div>
 
-      <div class="contacts__grid">
-        <div class="contacts__info">
-          <p><strong>Адрес:</strong> г. Новозыбков, ул. Луговая, д. 40</p>
-          <p><strong>Телефон:</strong> <a href="tel:+79007779090" data-event="contact_click" data-contact-type="phone">+7 900 777-90-90</a></p>
-          <p><strong>E-mail:</strong> <a href="mailto:vet@lapadok.example" data-event="contact_click" data-contact-type="email">vet@lapadok.example</a></p>
-          <p><strong>Режим работы:</strong> Круглосуточно, 24/7</p>
-          <a href="https://t.me/lapadok_vet" target="_blank" rel="noopener" class="btn btn--outline"
-             data-event="messenger_click" data-messenger="telegram">Telegram</a>
-          <a href="https://wa.me/79007779090" target="_blank" rel="noopener" class="btn btn--outline"
-             data-event="messenger_click" data-messenger="whatsapp">WhatsApp</a>
-          <a href="https://yandex.ru/maps/?text=Новозыбков+Луговая+40" target="_blank" rel="noopener" class="btn btn--outline" 
-          data-event="contact_click" data-contact-type="map" data-map-service="yandex">Открыть карту</a>
+                    <button type="submit" id="submitBtn" class="btn-primary">Записаться</button>
+                    
+                    <div id="formError" class="form-error" hidden></div>
+                </form>
+            </div>
+        </section>
+
+        <!-- 2. КОНТАКТЫ (Телефон и e-mail) -->
+        <section class="contacts-info">
+            <div class="container">
+                <h2>Наши контакты</h2>
+                <div class="contacts-grid">
+                    <div>
+                        <p>Телефон для записи:</p>
+                        <a href="tel:+79991234567" data-event="contact_click" data-contact-type="phone">+7 (999) 123-45-67</a>
+                    </div>
+                    <div>
+                        <p>Электронная почта:</p>
+                        <a href="mailto:info@lapadok.ru" data-event="contact_click" data-contact-type="email">info@lapadok.ru</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. МЕССЕНДЖЕРЫ (Telegram и WhatsApp) -->
+        <section class="messengers">
+            <div class="container">
+                <h2>Напишите нам</h2>
+                <div class="messenger-buttons">
+                    <a href="https://t.me/lapadok" target="_blank" rel="noopener" class="btn-messenger telegram" data-event="messenger_click" data-messenger="telegram">
+                        Написать в Telegram
+                    </a>
+                    <a href="https://wa.me/79991234567" target="_blank" rel="noopener" class="btn-messenger whatsapp" data-event="messenger_click" data-messenger="whatsapp">
+                        Написать в WhatsApp
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. ССЫЛКА НА КАРТУ -->
+        <section class="map-link-section">
+            <div class="container">
+                <h2>Как нас найти</h2>
+                <!-- Здесь можно вставить iframe с картой, но по ТЗ нужна ссылка -->
+                <a href="https://yandex.ru/maps/?text=Москва,+ул.+Ленина,+д.+1" target="_blank" rel="noopener" class="link-to-map" data-event="map_open">
+                    📍 Открыть на карте (Яндекс.Карты)
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <!-- ПОДВАЛ САЙТА -->
+    <footer class="site-footer">
+        <div class="container footer-inner">
+            <p>&copy; 2026 Ветеринарная клиника «Лападок». Круглосуточно.</p>
+            <div class="social-links">
+                <!-- События social_click для кнопок соцсетей -->
+                <a href="https://instagram.com/lapadok" target="_blank" rel="noopener" data-event="social_click" data-network="instagram" data-page-section="footer">Instagram</a>
+                <a href="https://vk.com/lapadok" target="_blank" rel="noopener" data-event="social_click" data-network="vk" data-page-section="footer">ВКонтакте</a>
+                <a href="https://t.me/lapadok" target="_blank" rel="noopener" data-event="social_click" data-network="telegram" data-page-section="footer">Telegram</a>
+            </div>
+            <a href="privacy.html">Политика конфиденциальности</a>
         </div>
-        <div class="contacts__map">
-          <img src="img/map.png" alt="Карта проезда">
-        </div>
-      </div>
-    </div>
-  </main>
+    </footer>
 
-  <footer class="footer">
-    <div class="container footer__inner">
-      <p>© 2026 ООО «Лападок». ИНН 9907 420 257.</p>
-      <div class="footer__socials">
-        <a href="https://instagram.com/lapadok_vet" target="_blank" rel="noopener"
-           data-event="social_click" data-network="instagram" data-page-section="footer">Instagram</a>
-        <a href="https://vk.com/lapadok_vet" target="_blank" rel="noopener"
-           data-event="social_click" data-network="vk" data-page-section="footer">ВКонтакте</a>
-        <a href="https://t.me/lapadok_vet" target="_blank" rel="noopener"
-           data-event="social_click" data-network="telegram" data-page-section="footer">Telegram</a>
-      </div>
-      <a href="privacy.html">Политика конфиденциальности</a>
-    </div>
-  </footer>
-
-  <script src="js/analytics.js"></script>
-  
-  <!-- ⚠️ ЗАМЕНИТЕ ССЫЛКУ НИЖЕ НА ВАШУ (из шага "Развернуть" в Apps Script) -->
-  <script>
-    window.LEADS_ENDPOINT = 'ВАША_ССЫЛКА_ИЗ_APPS_SCRIPT';
-  </script>
-  
-  <script src="js/form.js"></script>
+    <!-- ПОДКЛЮЧЕНИЕ СКРИПТОВ (строго в конце) -->
+    <!-- analytics.js нужен для отправки событий в GA4 -->
+    <script src="js/analytics.js"></script>
+    <!-- form.js нужен для работы формы и сохранения UTM -->
+    <script src="js/form.js"></script>
 </body>
 </html>
