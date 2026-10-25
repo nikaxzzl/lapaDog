@@ -242,3 +242,156 @@ function setupCrmImport() {
   sheet.autoResizeColumns(1, headers.length);
   SpreadsheetApp.getUi().alert('Лист «crm_import» создан и настроен.');
 }
+/**
+ * Приёмник заявок с сайта ветклиники «Лападок».
+ * Принимает POST (JSON), валидирует, пишет в лист leads.
+ * ТЗ-06/2026, раздел 6.2.
+ */
+
+// ID таблицы — допускается в коде по ТЗ. Пароли и ключи — нет.
+const SPREADSHEET_ID = '1k8PA1CkCwjY_hQaVpb9vShLfIKEiV_G_ti86mwSy5Q8';
+const SHEET_NAME = 'leads';
+
+function doPost(e) {
+  try {
+    // 1. Разбор тела запроса
+    if (!e || !e.postData || !e.postData.contents) {
+      return json({ ok: false, error: 'Пустой запрос' });
+    }
+    const data = JSON.parse(e.postData.contents);
+
+    const sheet = SpreadsheetApp
+      .openById(SPREADSHEET_ID)
+      .getSheetByName(SHEET_NAME);
+
+    // 2. Защита от дублей по request_id
+    if (isDuplicate(sheet, data.request_id)) {
+      return json({ ok: true, request_id: data.request_id, duplicate: true });
+    }
+
+    // 3. Валидация
+    const err = validate(data);
+    if (err) return json({ ok: false, error: err });
+
+    // 4. Запись строки. status из браузера игнорируется — всегда 'new'.
+    sheet.appendRow([
+      data.request_id,
+      new Date(),                                  // created_at
+      data.name.trim(),
+      data.phone.trim(),
+      (data.email || '').trim(),
+      data.pet_type,
+      data.service,
+      data.utm_source || 'direct',
+      data.utm_medium || 'none',
+      data.utm_campaign || 'not_set',
+      data.utm_content || 'not_set',
+      'new',
+    ]);
+
+    return json({ ok: true, request_id: data.request_id });
+
+  } catch (err) {
+    return json({ ok: false, error: 'Ошибка сервера: ' + err.message });
+  }
+}
+
+/**
+ * Проверка, есть ли уже такой request_id в столбце A.
+ */
+function isDuplicate(sheet, requestId) {
+  if (!requestId) return false;
+  const lastRow = sheet.getLastRow();
+  if (lastRow < 2) return false;
+  const ids = sheet.getRange(2, 1, lastRow - 1, 1).getValues().flat();
+  return ids.indexOf(requestId) !== -1;
+}
+
+/**
+ * Валидация полей. Возвращает null, если всё ок, иначе строку с ошибкой.
+ */
+function validate(d) {
+  const required = ['request_id', 'name', 'phone', 'pet_type', 'service'];
+  for (const f of required) {
+    if (d[f] === undefined || d[f] === null || String(d[f]).trim() === '') {
+      return 'Поле «' + f + '» обязательно';
+    }
+  }
+
+  // Длина строк не более 200 символов
+  const allFields = ['request_id', 'name', 'phone', 'email',
+                     'pet_type', 'service', 'utm_source',
+                     'utm_medium', 'utm_campaign', 'utm_content'];
+  for (const f of allFields) {
+    if (d[f] && String(d[f]).length > 200) {
+      return 'Поле «' + f + '» длиннее 200 символов';
+    }
+  }
+
+  // Имя: 2–60 символов
+  const name = String(d.name).trim();
+  if (name.length < 2 || name.length > 60) {
+    return 'Имя должно быть от 2 до 60 символов';
+  }
+
+  // Телефон: +7 и 10 цифр
+  if (!/^\+7\d{10}$/.test(String(d.phone).trim())) {
+    return 'Телефон должен быть в формате +7XXXXXXXXXX';
+  }
+
+  // E-mail: проверяем, только если передан
+  const email = (d.email || '').trim();
+  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    return 'Некорректный e-mail';
+  }
+
+  // Списки
+  const petTypes = ['cat', 'dog', 'rabbit', 'other'];
+  if (petTypes.indexOf(d.pet_type) === -1) {
+    return 'Недопустимый pet_type';
+  }
+
+  const services = ['consult', 'vaccine', 'chip', 'sterilization',
+                    'analysis', 'home_visit'];
+  if (services.indexOf(d.service) === -1) {
+    return 'Недопустимый service';
+  }
+
+  return null;
+}
+
+/**
+ * Хелпер для JSON-ответа.
+ */
+function json(obj) {
+  return ContentService
+    .createTextOutput(JSON.stringify(obj))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+/**
+ * Тестовая функция для запуска из редактора (кнопка Run).
+ * Создаёт фейковый запрос и логирует результат.
+ * ВАЖНО: перед сдачей удалите её или уберите данные из таблицы.
+ */
+function testDoPost() {
+  const fakeEvent = {
+    postData: {
+      contents: JSON.stringify({
+        request_id: 'REQ-test-' + Date.now(),
+        name: 'Тест Тестович',
+        phone: '+79991234567',
+        email: 'test@example.com',
+        pet_type: 'cat',
+        service: 'vaccine',
+        utm_source: 'instagram',
+        utm_medium: 'social',
+        utm_campaign: 'vaccine_nov_2026',
+        utm_content: 'reel_kit_01',
+        status: 'new',
+      }),
+    },
+  };
+  const res = doPost(fakeEvent);
+  Logger.log(res.getContent());
+}
