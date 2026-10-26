@@ -1,4 +1,18 @@
+// ==========================================
+// БЛОК СБОРА UTM-МЕТОК
+// ==========================================
+function getUtmParams() {
+    const urlParams = new URLSearchParams(window.location.search);
+    return {
+        utm_source: urlParams.get('utm_source') || 'not_set',
+        utm_medium: urlParams.get('utm_medium') || 'not_set',
+        utm_campaign: urlParams.get('utm_campaign') || 'not_set',
+        utm_content: urlParams.get('utm_content') || 'not_set'
+    };
+}
+// ==========================================
 // js/form.js — отправка заявки на Apps Script
+
 (function () {
   'use strict';
 
