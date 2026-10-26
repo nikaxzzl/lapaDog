@@ -24,13 +24,14 @@ function getUtmParams() {
     var originalBtnText = btn ? btn.textContent : '';
     var endpoint = window.LEADS_ENDPOINT || '';
 
+      // Ловим UTM-метки на любой странице и сохраняем в память браузера
     var UTM_KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content'];
-    var params = new URLSearchParams(window.location.search);
-
+    var urlParams = new URLSearchParams(window.location.search);
+  
     UTM_KEYS.forEach(function (key) {
-      var value = params.get(key);
-      if (value) sessionStorage.setItem(key, value);
-    });
+    var value = urlParams.get(key);
+    if (value) sessionStorage.setItem(key, value);
+  });
 
     function getUtm(key, fallback) {
       return sessionStorage.getItem(key) || fallback;
