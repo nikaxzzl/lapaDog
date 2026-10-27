@@ -1,20 +1,17 @@
-// ==========================================
-// БЛОК СБОРА UTM-МЕТОК
-// ==========================================
-function getUtmParams() {
-    const urlParams = new URLSearchParams(window.location.search);
-    return {
-        utm_source: urlParams.get('utm_source') || 'not_set',
-        utm_medium: urlParams.get('utm_medium') || 'not_set',
-        utm_campaign: urlParams.get('utm_campaign') || 'not_set',
-        utm_content: urlParams.get('utm_content') || 'not_set'
-    };
-}
-// ==========================================
 // js/form.js — отправка заявки на Apps Script
 
 (function () {
   'use strict';
+
+  // 1. Сбор UTM-меток при любом переходе (сохраняем в sessionStorage)
+  (function captureUtm() {
+    var keys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content'];
+    var urlParams = new URLSearchParams(window.location.search);
+    keys.forEach(function (key) {
+      var v = urlParams.get(key);
+      if (v) sessionStorage.setItem(key, v);
+    });
+  })();
 
   document.addEventListener('DOMContentLoaded', function () {
     var form = document.getElementById('leadForm');
@@ -24,14 +21,11 @@ function getUtmParams() {
     var originalBtnText = btn ? btn.textContent : '';
     var endpoint = window.LEADS_ENDPOINT || '';
 
-      // Ловим UTM-метки на любой странице и сохраняем в память браузера
-    var UTM_KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content'];
-    var urlParams = new URLSearchParams(window.location.search);
-  
-    UTM_KEYS.forEach(function (key) {
-    var value = urlParams.get(key);
-    if (value) sessionStorage.setItem(key, value);
-  });
+    // Синхронизируем скрытые поля с sessionStorage
+    ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content'].forEach(function (k) {
+      var el = form.querySelector('[name="' + k + '"]');
+      if (el) el.value = sessionStorage.getItem(k) || '';
+    });
 
     function getUtm(key, fallback) {
       return sessionStorage.getItem(key) || fallback;

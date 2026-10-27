@@ -50,6 +50,11 @@
         if (!el) return;
 
         var event = el.dataset.event;
+
+        // Эти события обрабатываем отдельно ниже, чтобы не было дублей
+        if (event === 'faq_open') return;
+        if (event === 'pet_type_select') return;
+
         var params = {};
 
         // Все data-* превращаем в snake_case
@@ -75,16 +80,16 @@
         }
         if (event === 'select_service') {
             if (!params.service_name) return;
-            // price_from берём из data-price-from, если есть
         }
 
         // ---------- Особые случаи ----------
         if (event === 'file_download') {
-            if (!el.href) return;
-            var fileName = el.href.split('/').pop().split('?')[0];
-            params.file_name = fileName;
+            var anchor = el.closest('a') || el;
+            if (!anchor.href) return;
+            var fileName = anchor.href.split('/').pop().split('?')[0];
+            params.file_name = params.file_name || fileName;
             var dot = fileName.lastIndexOf('.');
-            params.file_extension = dot > -1 ? fileName.slice(dot + 1).toLowerCase() : '';
+            params.file_extension = params.file_extension || (dot > -1 ? fileName.slice(dot + 1).toLowerCase() : '');
         }
 
         if (event === 'promo_copy') {
@@ -117,13 +122,28 @@
         var el = target.closest('[data-event="pet_type_select"]');
         if (!el) return;
 
+        var petType = el.dataset.petType;
+        if (!petType) return;
+
         document.querySelectorAll('.pet-select__card').forEach(function (card) {
             card.classList.remove('pet-select__card--active');
         });
         el.classList.add('pet-select__card--active');
-        sessionStorage.setItem('selected_pet', el.dataset.petType);
+        sessionStorage.setItem('selected_pet', petType);
+
+        // Отправляем событие (один раз)
+        send('pet_type_select', { pet_type: petType });
 
         var services = document.querySelector('.services');
         if (services) services.scrollIntoView({ behavior: 'smooth' });
     });
+
+    // ---------- FAQ (событие toggle) ----------
+    document.addEventListener('toggle', function (e) {
+        var el = e.target;
+        if (el && el.tagName === 'DETAILS' && el.dataset.event === 'faq_open' && el.open) {
+            send('faq_open', { question_id: el.dataset.questionId || 'unknown' });
+        }
+    }, true); // useCapture: true — toggle не всплывает
+
 })();

@@ -2,19 +2,6 @@
 (function () {
   'use strict';
 
-  // ==========================================
-  // БЛОК 1: СБОР И СОХРАНЕНИЕ UTM-МЕТОК
-  // ==========================================
-  var UTM_KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content'];
-  var urlParams = new URLSearchParams(window.location.search);
-  
-  UTM_KEYS.forEach(function (key) {
-    var value = urlParams.get(key);
-    if (value) {
-      sessionStorage.setItem(key, value);
-    }
-  });
-
   var VACCINES = {
     cat: [
       [8,  'Комплексная вакцинация (1-я)'],
@@ -94,6 +81,6 @@
   ageEl.addEventListener('input', onChange);
   ageEl.addEventListener('change', onChange);
 
-  // Первичный рендер без отправки события — иначе в DebugView шум
+  // Первичный рендер без отправки события
   render();
 })();
