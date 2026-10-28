@@ -51,13 +51,14 @@
           <p><strong>E-mail:</strong> <a href="mailto:vet@lapadok.example" data-event="contact_click" data-contact-type="email">vet@lapadok.example</a></p>
           <p><strong>Режим работы:</strong> круглосуточно, 7 дней в неделю</p>
           
+          <!-- Кнопки мессенджеров (требование ТЗ) -->
           <div style="margin-top: 20px; display: flex; gap: 15px; flex-wrap: wrap;">
             <a href="https://t.me/lapadok_vet" target="_blank" class="btn btn--primary" data-event="messenger_click" data-messenger="telegram">Telegram</a>
             <a href="https://wa.me/79006062424" target="_blank" class="btn btn--outline" data-event="messenger_click" data-messenger="whatsapp">WhatsApp</a>
           </div>
         </div>
         
-        <!-- Карта с событием map_open -->
+        <!-- Ссылка на карту (требование ТЗ: событие map_open) -->
         <div class="contacts__map">
           <a href="https://yandex.ru/maps/?text=Новоозёрск, ул. Луговая, д. 40" target="_blank" data-event="map_open">
             <img src="img/map.png" alt="Карта проезда">
@@ -87,7 +88,6 @@
           </div>
 
           <label for="lf-service">Услуга</label>
-          <!-- В ТЗ значения должны быть: consult, vaccine, chip, sterilization, analysis, home_visit -->
           <select id="lf-service" name="service">
             <option value="consult">Первичный приём</option>
             <option value="vaccine">Комплексная вакцинация</option>
@@ -131,5 +131,29 @@
   </script>
   <script src="js/analytics.js"></script>
   <script src="js/form.js"></script>
+  
+  <!-- СКРИПТ АВТОЗАПОЛНЕНИЯ -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // 1. Подставляем животное, выбранное на главной
+      var selectedPet = sessionStorage.getItem('selected_pet');
+      if (selectedPet) {
+        var radio = document.querySelector('input[name="pet_type"][value="' + selectedPet + '"]');
+        if (radio) {
+          radio.checked = true;
+        }
+      }
+
+      // 2. Подставляем услугу, если перешли по кнопке со страницы услуг
+      var urlParams = new URLSearchParams(window.location.search);
+      var selectedService = urlParams.get('service');
+      if (selectedService) {
+        var serviceSelect = document.querySelector('select[name="service"]');
+        if (serviceSelect) {
+          serviceSelect.value = selectedService;
+        }
+      }
+    });
+  </script>
 </body>
 </html>
