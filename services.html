@@ -5,25 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Услуги и цены — ветклиника «Лападок»</title>
   <meta name="description" content="Услуги ветклиники «Лападок»: приём, вакцинация, чипирование, стерилизация, анализы, УЗИ. Цены и запись онлайн.">
-  <meta property="og:title" content="Услуги и цены — Лападок">
-  <meta property="og:description" content="Полный спектр ветеринарных услуг. Запись онлайн.">
-  <meta property="og:image" content="img/og-image.jpg">
-  <meta property="og:type" content="website">
   <link rel="icon" href="img/log.ico">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
-
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-XVT5FS2HTK"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-XVT5FS2HTK');
-  </script>
+  <script>window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-XVT5FS2HTK');</script>
 </head>
-
 <body>
   <header class="header">
     <div class="container header__inner">
@@ -54,32 +43,29 @@
         <h1 class="section__title">Услуги и цены</h1>
         <p class="hero__desc">Полный спектр ветеринарных услуг для ваших питомцев</p>
       </div>
+      
+      <!-- Главная CTA страницы (по Приложению А) -->
+      <div class="text-center" style="margin-bottom: 40px;">
+        <a href="contacts.html" class="btn btn--primary"
+           data-event="select_service" data-service-name="Консультация" data-price-from="0">Записаться на услугу</a>
+      </div>
 
       <div class="services__grid">
         <article class="service-card" data-event="service_view" data-service-name="Первичный приём">
           <div class="service-card__content" style="padding-top: 30px;">
             <h3>Первичный приём</h3>
             <p class="service-card__price">1 200 ₽</p>
-            <a href="contacts.html" class="btn btn--small btn--primary" style="margin-top: 20px; align-self: flex-start;"
+            <a href="contacts.html?service=consult" class="btn btn--small btn--primary" style="margin-top: 20px; align-self: flex-start;"
                data-event="select_service" data-service-name="Первичный приём" data-price-from="1200">Записаться</a>
           </div>
         </article>
 
-        <article class="service-card" data-event="service_view" data-service-name="Комплексная вакцинация кошки">
+        <article class="service-card" data-event="service_view" data-service-name="Комплексная вакцинация">
           <div class="service-card__content" style="padding-top: 30px;">
-            <h3>Комплексная вакцинация кошки</h3>
-            <p class="service-card__price">2 400 ₽</p>
-            <a href="contacts.html" class="btn btn--small btn--primary" style="margin-top: 20px; align-self: flex-start;"
-               data-event="select_service" data-service-name="Комплексная вакцинация кошки" data-price-from="2400">Записаться</a>
-          </div>
-        </article>
-
-        <article class="service-card" data-event="service_view" data-service-name="Комплексная вакцинация собаки">
-          <div class="service-card__content" style="padding-top: 30px;">
-            <h3>Комплексная вакцинация собаки</h3>
-            <p class="service-card__price">2 900 ₽</p>
-            <a href="contacts.html" class="btn btn--small btn--primary" style="margin-top: 20px; align-self: flex-start;"
-               data-event="select_service" data-service-name="Комплексная вакцинация собаки" data-price-from="2900">Записаться</a>
+            <h3>Комплексная вакцинация</h3>
+            <p class="service-card__price">2 400 / 2 900 ₽</p>
+            <a href="contacts.html?service=vaccine" class="btn btn--small btn--primary" style="margin-top: 20px; align-self: flex-start;"
+               data-event="select_service" data-service-name="Комплексная вакцинация" data-price-from="2400">Записаться</a>
           </div>
         </article>
 
@@ -87,7 +73,7 @@
           <div class="service-card__content" style="padding-top: 30px;">
             <h3>Чипирование</h3>
             <p class="service-card__price">1 500 ₽</p>
-            <a href="contacts.html" class="btn btn--small btn--primary" style="margin-top: 20px; align-self: flex-start;"
+            <a href="contacts.html?service=chip" class="btn btn--small btn--primary" style="margin-top: 20px; align-self: flex-start;"
                data-event="select_service" data-service-name="Чипирование" data-price-from="1500">Записаться</a>
           </div>
         </article>
@@ -96,7 +82,7 @@
           <div class="service-card__content" style="padding-top: 30px;">
             <h3>Стерилизация кошки</h3>
             <p class="service-card__price">от 6 500 ₽</p>
-            <a href="contacts.html" class="btn btn--small btn--primary" style="margin-top: 20px; align-self: flex-start;"
+            <a href="contacts.html?service=sterilization" class="btn btn--small btn--primary" style="margin-top: 20px; align-self: flex-start;"
                data-event="select_service" data-service-name="Стерилизация кошки" data-price-from="6500">Записаться</a>
           </div>
         </article>
@@ -105,7 +91,7 @@
           <div class="service-card__content" style="padding-top: 30px;">
             <h3>Анализы крови</h3>
             <p class="service-card__price">от 900 ₽</p>
-            <a href="contacts.html" class="btn btn--small btn--primary" style="margin-top: 20px; align-self: flex-start;"
+            <a href="contacts.html?service=analysis" class="btn btn--small btn--primary" style="margin-top: 20px; align-self: flex-start;"
                data-event="select_service" data-service-name="Анализы крови" data-price-from="900">Записаться</a>
           </div>
         </article>
@@ -114,16 +100,16 @@
           <div class="service-card__content" style="padding-top: 30px;">
             <h3>УЗИ</h3>
             <p class="service-card__price">1 800 ₽</p>
-            <a href="contacts.html" class="btn btn--small btn--primary" style="margin-top: 20px; align-self: flex-start;"
+            <a href="contacts.html?service=analysis" class="btn btn--small btn--primary" style="margin-top: 20px; align-self: flex-start;"
                data-event="select_service" data-service-name="УЗИ" data-price-from="1800">Записаться</a>
           </div>
         </article>
-
+        
         <article class="service-card" data-event="service_view" data-service-name="Вызов врача на дом">
           <div class="service-card__content" style="padding-top: 30px;">
             <h3>Вызов врача на дом</h3>
             <p class="service-card__price">2 500 ₽</p>
-            <a href="contacts.html" class="btn btn--small btn--primary" style="margin-top: 20px; align-self: flex-start;"
+            <a href="contacts.html?service=home_visit" class="btn btn--small btn--primary" style="margin-top: 20px; align-self: flex-start;"
                data-event="select_service" data-service-name="Вызов врача на дом" data-price-from="2500">Записаться</a>
           </div>
         </article>
@@ -142,19 +128,14 @@
     <div class="container footer__inner">
       <p>© 2026 ООО «Лападок». ИНН 9906 410 258.</p>
       <div class="footer__socials">
-        <a href="https://instagram.com/lapadok_vet" target="_blank" rel="noopener"
-           data-event="social_click" data-network="instagram" data-page-section="footer">Instagram</a>
-        <a href="https://vk.com/lapadok_vet" target="_blank" rel="noopener"
-           data-event="social_click" data-network="vk" data-page-section="footer">ВКонтакте</a>
-        <a href="https://t.me/lapadok_vet" target="_blank" rel="noopener"
-           data-event="social_click" data-network="telegram" data-page-section="footer">Telegram</a>
-        <a href="https://youtube.com/@lapadok_vet" target="_blank" rel="noopener"
-           data-event="social_click" data-network="youtube" data-page-section="footer">YouTube</a>
+        <a href="https://instagram.com/lapadok_vet" target="_blank" rel="noopener" data-event="social_click" data-network="instagram" data-page-section="footer">Instagram</a>
+        <a href="https://vk.com/lapadok_vet" target="_blank" rel="noopener" data-event="social_click" data-network="vk" data-page-section="footer">ВКонтакте</a>
+        <a href="https://t.me/lapadok_vet" target="_blank" rel="noopener" data-event="social_click" data-network="telegram" data-page-section="footer">Telegram</a>
+        <a href="https://youtube.com/@lapadok_vet" target="_blank" rel="noopener" data-event="social_click" data-network="youtube" data-page-section="footer">YouTube</a>
       </div>
       <a href="privacy.html">Политика конфиденциальности</a>
     </div>
   </footer>
-
   <script src="js/analytics.js"></script>
 </body>
 </html>

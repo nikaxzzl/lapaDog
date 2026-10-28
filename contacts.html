@@ -5,25 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Контакты и запись на приём — ветклиника «Лападок»</title>
   <meta name="description" content="Записаться на приём в ветклинику «Лападок». Адрес, телефон, e-mail, карта проезда. Круглосуточно.">
-  <meta property="og:title" content="Контакты и запись — Лападок">
-  <meta property="og:description" content="Запись онлайн. Адрес, телефон, карта.">
-  <meta property="og:image" content="img/og-image.jpg">
-  <meta property="og:type" content="website">
   <link rel="icon" href="img/log.ico">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
-
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-XVT5FS2HTK"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-XVT5FS2HTK');
-  </script>
+  <script>window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-XVT5FS2HTK');</script>
 </head>
-
 <body>
   <header class="header">
     <div class="container header__inner">
@@ -61,14 +50,24 @@
           <p><strong>Телефон:</strong> <a href="tel:+79006062424" data-event="contact_click" data-contact-type="phone">+7 900 606-24-24</a></p>
           <p><strong>E-mail:</strong> <a href="mailto:vet@lapadok.example" data-event="contact_click" data-contact-type="email">vet@lapadok.example</a></p>
           <p><strong>Режим работы:</strong> круглосуточно, 7 дней в неделю</p>
+          
+          <div style="margin-top: 20px; display: flex; gap: 15px; flex-wrap: wrap;">
+            <a href="https://t.me/lapadok_vet" target="_blank" class="btn btn--primary" data-event="messenger_click" data-messenger="telegram">Telegram</a>
+            <a href="https://wa.me/79006062424" target="_blank" class="btn btn--outline" data-event="messenger_click" data-messenger="whatsapp">WhatsApp</a>
+          </div>
         </div>
+        
+        <!-- Карта с событием map_open -->
         <div class="contacts__map">
-          <img src="img/map.png" alt="Карта проезда">
+          <a href="https://yandex.ru/maps/?text=Новоозёрск, ул. Луговая, д. 40" target="_blank" data-event="map_open">
+            <img src="img/map.png" alt="Карта проезда">
+          </a>
         </div>
       </div>
 
       <div class="faq__cta" style="max-width: 600px; margin: 0 auto; position: static;">
         <h2 class="section__title" style="font-size: 26px;">Записаться на приём</h2>
+        
         <form id="leadForm" class="faq__form" novalidate>
           <label for="lf-name">Ваше имя</label>
           <input id="lf-name" type="text" name="name" placeholder="Иван" required maxlength="60">
@@ -88,14 +87,14 @@
           </div>
 
           <label for="lf-service">Услуга</label>
+          <!-- В ТЗ значения должны быть: consult, vaccine, chip, sterilization, analysis, home_visit -->
           <select id="lf-service" name="service">
-            <option value="Первичный приём">Первичный приём</option>
-            <option value="Комплексная вакцинация">Комплексная вакцинация</option>
-            <option value="Чипирование">Чипирование</option>
-            <option value="Стерилизация кошки">Стерилизация кошки</option>
-            <option value="Анализы крови">Анализы крови</option>
-            <option value="УЗИ">УЗИ</option>
-            <option value="Вызов врача на дом">Вызов врача на дом</option>
+            <option value="consult">Первичный приём</option>
+            <option value="vaccine">Комплексная вакцинация</option>
+            <option value="chip">Чипирование</option>
+            <option value="sterilization">Стерилизация кошки</option>
+            <option value="analysis">Анализы крови / УЗИ</option>
+            <option value="home_visit">Вызов врача на дом</option>
           </select>
 
           <label style="display:flex; align-items:center; gap:10px; margin-top:12px;">
@@ -103,7 +102,6 @@
             <span>Согласен с <a href="privacy.html" target="_blank">политикой конфиденциальности</a></span>
           </label>
 
-          <!-- Скрытые UTM-поля (заполняются в form.js из sessionStorage) -->
           <input type="hidden" name="utm_source" value="">
           <input type="hidden" name="utm_medium" value="">
           <input type="hidden" name="utm_campaign" value="">
@@ -119,23 +117,16 @@
     <div class="container footer__inner">
       <p>© 2026 ООО «Лападок». ИНН 9906 410 258.</p>
       <div class="footer__socials">
-        <a href="https://instagram.com/lapadok_vet" target="_blank" rel="noopener"
-           data-event="social_click" data-network="instagram" data-page-section="footer">Instagram</a>
-        <a href="https://vk.com/lapadok_vet" target="_blank" rel="noopener"
-           data-event="social_click" data-network="vk" data-page-section="footer">ВКонтакте</a>
-        <a href="https://t.me/lapadok_vet" target="_blank" rel="noopener"
-           data-event="social_click" data-network="telegram" data-page-section="footer">Telegram</a>
-        <a href="https://youtube.com/@lapadok_vet" target="_blank" rel="noopener"
-           data-event="social_click" data-network="youtube" data-page-section="footer">YouTube</a>
+        <a href="https://instagram.com/lapadok_vet" target="_blank" rel="noopener" data-event="social_click" data-network="instagram" data-page-section="footer">Instagram</a>
+        <a href="https://vk.com/lapadok_vet" target="_blank" rel="noopener" data-event="social_click" data-network="vk" data-page-section="footer">ВКонтакте</a>
+        <a href="https://t.me/lapadok_vet" target="_blank" rel="noopener" data-event="social_click" data-network="telegram" data-page-section="footer">Telegram</a>
+        <a href="https://youtube.com/@lapadok_vet" target="_blank" rel="noopener" data-event="social_click" data-network="youtube" data-page-section="footer">YouTube</a>
       </div>
       <a href="privacy.html">Политика конфиденциальности</a>
     </div>
   </footer>
 
-  <!-- Endpoint вашего Apps Script (замените на свой URL) -->
   <script>
-    // Если у вас ещё нет Apps Script — временно укажите тестовый URL,
-    // который возвращает {"ok": true}. Форма будет редиректить на thanks.html.
     window.LEADS_ENDPOINT = 'https://script.google.com/macros/s/ВАШ_SCRIPT_ID/exec';
   </script>
   <script src="js/analytics.js"></script>

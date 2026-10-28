@@ -28,7 +28,7 @@
   <header class="header">
     <div class="container header__inner">
       <a href="index.html" class="logo">
-        <img src="img/logo.png" alt="Лападок" width="100" height="70">
+        <img src="img/logo.png" alt="Лападок" width="50" height="50">
         <div class="logo__text">
           <span class="logo__title">ЛАПАДОК</span>
           <span class="logo__subtitle">ветеринарная клиника 24/7</span>
@@ -94,37 +94,6 @@
       </div>
     </section>
 
-    <section class="features section">
-      <div class="container">
-        <div class="section__header text-center">
-          <span class="badge">О нас</span>
-          <h2 class="section__title">Мы объединили опытных специалистов, современное оборудование и искреннюю заботу</h2>
-        </div>
-        <div class="features__grid">
-          <div class="feature-card feature-card--dark">
-            <h3>Опытные врачи и узкие специалисты</h3>
-            <p>Регулярно повышаем квалификацию и посещаем конференции.</p>
-          </div>
-          <div class="feature-card">
-            <h3>Собственная современная лаборатория</h3>
-            <p>Быстрые анализы без ожидания в сторонних центрах.</p>
-          </div>
-          <div class="feature-card">
-            <h3>Индивидуальный и искренний подход</h3>
-            <p>Каждый питомец получает максимум внимания.</p>
-          </div>
-          <div class="feature-card">
-            <h3>Честность и прозрачность</h3>
-            <p>Никаких скрытых платежей и навязанных услуг.</p>
-          </div>
-          <div class="feature-card">
-            <h3>Комфортный стационар</h3>
-            <p>Просторные вольеры и круглосуточное наблюдение.</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
     <section class="services section">
       <div class="container">
         <div class="section__header text-center">
@@ -136,7 +105,7 @@
             <div class="service-card__content">
               <h3>Первичный приём</h3>
               <p class="service-card__price">1 200 ₽</p>
-              <a href="contacts.html"><span class="service-card__arrow">&rarr;</span></a>
+              <a href="contacts.html?service=consult"><span class="service-card__arrow">&rarr;</span></a>
             </div>
           </article>
           <article class="service-card" data-event="service_view" data-service-name="Комплексная вакцинация">
@@ -145,7 +114,7 @@
               <span class="badge badge--accent">−20 %</span>
               <h3>Комплексная вакцинация</h3>
               <p class="service-card__price">кошка — 2 400 ₽, собака — 2 900 ₽</p>
-              <a href="contacts.html"><span class="service-card__arrow">&rarr;</span></a>
+              <a href="contacts.html?service=vaccine"><span class="service-card__arrow">&rarr;</span></a>
             </div>
           </article>
           <article class="service-card" data-event="service_view" data-service-name="Чипирование">
@@ -153,7 +122,7 @@
             <div class="service-card__content">
               <h3>Чипирование</h3>
               <p class="service-card__price">1 500 ₽</p>
-              <a href="contacts.html"><span class="service-card__arrow">&rarr;</span></a>
+              <a href="contacts.html?service=chip"><span class="service-card__arrow">&rarr;</span></a>
             </div>
           </article>
           <article class="service-card" data-event="service_view" data-service-name="Стерилизация кошки">
@@ -161,7 +130,7 @@
             <div class="service-card__content">
               <h3>Стерилизация кошки</h3>
               <p class="service-card__price">от 6 500 ₽</p>
-              <a href="contacts.html"><span class="service-card__arrow">&rarr;</span></a>
+              <a href="contacts.html?service=sterilization"><span class="service-card__arrow">&rarr;</span></a>
             </div>
           </article>
           <article class="service-card" data-event="service_view" data-service-name="Анализы крови">
@@ -169,7 +138,7 @@
             <div class="service-card__content">
               <h3>Анализы крови</h3>
               <p class="service-card__price">от 900 ₽</p>
-              <a href="contacts.html"><span class="service-card__arrow">&rarr;</span></a>
+              <a href="contacts.html?service=analysis"><span class="service-card__arrow">&rarr;</span></a>
             </div>
           </article>
           <article class="service-card" data-event="service_view" data-service-name="УЗИ">
@@ -177,7 +146,7 @@
             <div class="service-card__content">
               <h3>УЗИ</h3>
               <p class="service-card__price">1 800 ₽</p>
-              <a href="contacts.html"><span class="service-card__arrow">&rarr;</span></a>
+              <a href="contacts.html?service=analysis"><span class="service-card__arrow">&rarr;</span></a>
             </div>
           </article>
         </div>
@@ -247,14 +216,6 @@
               <summary>Работаете ли вы ночью?</summary>
               <div class="faq-item__content"><p>Да, клиника работает круглосуточно. Плановый приём — с 09:00 до 21:00, ночью принимаем экстренные случаи.</p></div>
             </details>
-            <details class="faq-item" data-event="faq_open" data-question-id="q4">
-              <summary>Можно ли вызвать врача на дом?</summary>
-              <div class="faq-item__content"><p>Да, вызов врача на дом — 2 500 ₽.</p></div>
-            </details>
-            <details class="faq-item" data-event="faq_open" data-question-id="q5">
-              <summary>Делаете ли вы УЗИ и анализы?</summary>
-              <div class="faq-item__content"><p>Да. УЗИ — 1 800 ₽, анализы крови — от 900 ₽.</p></div>
-            </details>
           </div>
         </div>
         <div class="faq__cta">
@@ -265,37 +226,16 @@
         </div>
       </div>
     </section>
-
-    <section class="contacts section" id="contacts">
-      <div class="container">
-        <h2 class="section__title text-center">Контакты</h2>
-        <div class="contacts__grid">
-          <div class="contacts__info">
-            <p><strong>Адрес:</strong> г. Новоозёрск, ул. Луговая, д. 40</p>
-            <p><strong>Телефон:</strong> <a href="tel:+79006062424" data-event="contact_click" data-contact-type="phone">+7 900 606-24-24</a></p>
-            <p><strong>E-mail:</strong> <a href="mailto:vet@lapadok.example" data-event="contact_click" data-contact-type="email">vet@lapadok.example</a></p>
-            <a href="contacts.html" class="btn btn--outline" data-event="cta_click" data-button-name="contacts_record" data-page-section="contacts">Записаться на приём</a>
-          </div>
-          <div class="contacts__map">
-            <img src="img/map.png" alt="Карта проезда">
-          </div>
-        </div>
-      </div>
-    </section>
   </main>
 
   <footer class="footer">
     <div class="container footer__inner">
       <p>© 2026 ООО «Лападок». ИНН 9906 410 258.</p>
       <div class="footer__socials">
-        <a href="https://instagram.com/lapadok_vet" target="_blank" rel="noopener"
-           data-event="social_click" data-network="instagram" data-page-section="footer">Instagram</a>
-        <a href="https://vk.com/lapadok_vet" target="_blank" rel="noopener"
-           data-event="social_click" data-network="vk" data-page-section="footer">ВКонтакте</a>
-        <a href="https://t.me/lapadok_vet" target="_blank" rel="noopener"
-           data-event="social_click" data-network="telegram" data-page-section="footer">Telegram</a>
-        <a href="https://youtube.com/@lapadok_vet" target="_blank" rel="noopener"
-           data-event="social_click" data-network="youtube" data-page-section="footer">YouTube</a>
+        <a href="https://instagram.com/lapadok_vet" target="_blank" rel="noopener" data-event="social_click" data-network="instagram" data-page-section="footer">Instagram</a>
+        <a href="https://vk.com/lapadok_vet" target="_blank" rel="noopener" data-event="social_click" data-network="vk" data-page-section="footer">ВКонтакте</a>
+        <a href="https://t.me/lapadok_vet" target="_blank" rel="noopener" data-event="social_click" data-network="telegram" data-page-section="footer">Telegram</a>
+        <a href="https://youtube.com/@lapadok_vet" target="_blank" rel="noopener" data-event="social_click" data-network="youtube" data-page-section="footer">YouTube</a>
       </div>
       <a href="privacy.html">Политика конфиденциальности</a>
     </div>
