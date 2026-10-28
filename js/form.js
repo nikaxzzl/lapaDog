@@ -3,16 +3,6 @@
 (function () {
   'use strict';
 
-  // 1. Сбор UTM-меток при любом переходе (сохраняем в sessionStorage)
-  (function captureUtm() {
-    var keys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content'];
-    var urlParams = new URLSearchParams(window.location.search);
-    keys.forEach(function (key) {
-      var v = urlParams.get(key);
-      if (v) sessionStorage.setItem(key, v);
-    });
-  })();
-
   document.addEventListener('DOMContentLoaded', function () {
     var form = document.getElementById('leadForm');
     if (!form) return;
@@ -21,7 +11,6 @@
     var originalBtnText = btn ? btn.textContent : '';
     var endpoint = window.LEADS_ENDPOINT || '';
 
-    // Синхронизируем скрытые поля с sessionStorage
     ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content'].forEach(function (k) {
       var el = form.querySelector('[name="' + k + '"]');
       if (el) el.value = sessionStorage.getItem(k) || '';
