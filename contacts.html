@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Страница не найдена — Лападок</title>
-  <meta name="description" content="Страница не найдена. Вернитесь на главную страницу ветеринарной клиники «Лападок».">
-  <meta property="og:title" content="Страница не найдена — Лападок">
-  <meta property="og:description" content="Страница не найдена.">
+  <title>Контакты и запись на приём — ветклиника «Лападок»</title>
+  <meta name="description" content="Записаться на приём в ветклинику «Лападок». Адрес, телефон, e-mail, карта проезда. Круглосуточно.">
+  <meta property="og:title" content="Контакты и запись — Лападок">
+  <meta property="og:description" content="Запись онлайн. Адрес, телефон, карта.">
   <meta property="og:image" content="img/og-image.jpg">
   <meta property="og:type" content="website">
   <link rel="icon" href="img/log.ico">
@@ -41,7 +41,7 @@
           <li><a href="doctors.html">Врачи</a></li>
           <li><a href="vaccines.html">Прививки</a></li>
           <li><a href="pet-kit.html">Аптечка</a></li>
-          <li><a href="contacts.html">Контакты</a></li>
+          <li><a href="contacts.html" class="is-active">Контакты</a></li>
         </ul>
       </nav>
       <a href="tel:+79006062424" class="header__phone" data-event="contact_click" data-contact-type="phone">+7 900 606-24-24</a>
@@ -49,12 +49,69 @@
   </header>
 
   <main class="section">
-    <div class="container text-center">
-      <h1 class="error-404__code">404</h1>
-      <h2 class="section__title">Страница не найдена</h2>
-      <p class="hero__desc">Возможно, она была удалена или вы ошиблись в адресе.</p>
-      <a href="index.html" class="btn btn--primary"
-         data-event="cta_click" data-button-name="404_home" data-page-section="404">На главную</a>
+    <div class="container">
+      <div class="section__header text-center">
+        <h1 class="section__title">Контакты и запись на приём</h1>
+        <p class="hero__desc">Работаем круглосуточно. Свяжемся с вами в течение 15 минут.</p>
+      </div>
+
+      <div class="contacts__grid" style="margin-bottom: 50px;">
+        <div class="contacts__info">
+          <p><strong>Адрес:</strong> г. Новоозёрск, ул. Луговая, д. 40</p>
+          <p><strong>Телефон:</strong> <a href="tel:+79006062424" data-event="contact_click" data-contact-type="phone">+7 900 606-24-24</a></p>
+          <p><strong>E-mail:</strong> <a href="mailto:vet@lapadok.example" data-event="contact_click" data-contact-type="email">vet@lapadok.example</a></p>
+          <p><strong>Режим работы:</strong> круглосуточно, 7 дней в неделю</p>
+        </div>
+        <div class="contacts__map">
+          <img src="img/map.png" alt="Карта проезда">
+        </div>
+      </div>
+
+      <div class="faq__cta" style="max-width: 600px; margin: 0 auto; position: static;">
+        <h2 class="section__title" style="font-size: 26px;">Записаться на приём</h2>
+        <form id="leadForm" class="faq__form" novalidate>
+          <label for="lf-name">Ваше имя</label>
+          <input id="lf-name" type="text" name="name" placeholder="Иван" required maxlength="60">
+
+          <label for="lf-phone">Телефон</label>
+          <input id="lf-phone" type="tel" name="phone" placeholder="+7 900 000-00-00" required>
+
+          <label for="lf-email">E-mail (необязательно)</label>
+          <input id="lf-email" type="email" name="email" placeholder="you@example.com">
+
+          <label>Вид питомца</label>
+          <div style="display:flex; gap:12px; flex-wrap:wrap; margin-bottom:12px;">
+            <label><input type="radio" name="pet_type" value="cat" checked> Кошка</label>
+            <label><input type="radio" name="pet_type" value="dog"> Собака</label>
+            <label><input type="radio" name="pet_type" value="rabbit"> Кролик</label>
+            <label><input type="radio" name="pet_type" value="other"> Другое</label>
+          </div>
+
+          <label for="lf-service">Услуга</label>
+          <select id="lf-service" name="service">
+            <option value="Первичный приём">Первичный приём</option>
+            <option value="Комплексная вакцинация">Комплексная вакцинация</option>
+            <option value="Чипирование">Чипирование</option>
+            <option value="Стерилизация кошки">Стерилизация кошки</option>
+            <option value="Анализы крови">Анализы крови</option>
+            <option value="УЗИ">УЗИ</option>
+            <option value="Вызов врача на дом">Вызов врача на дом</option>
+          </select>
+
+          <label style="display:flex; align-items:center; gap:10px; margin-top:12px;">
+            <input type="checkbox" name="consent" required>
+            <span>Согласен с <a href="privacy.html" target="_blank">политикой конфиденциальности</a></span>
+          </label>
+
+          <!-- Скрытые UTM-поля (заполняются в form.js из sessionStorage) -->
+          <input type="hidden" name="utm_source" value="">
+          <input type="hidden" name="utm_medium" value="">
+          <input type="hidden" name="utm_campaign" value="">
+          <input type="hidden" name="utm_content" value="">
+
+          <button type="submit" class="btn btn--primary" style="margin-top:16px;">Записаться</button>
+        </form>
+      </div>
     </div>
   </main>
 
@@ -75,7 +132,13 @@
     </div>
   </footer>
 
+  <!-- Endpoint вашего Apps Script (замените на свой URL) -->
+  <script>
+    // Если у вас ещё нет Apps Script — временно укажите тестовый URL,
+    // который возвращает {"ok": true}. Форма будет редиректить на thanks.html.
+    window.LEADS_ENDPOINT = 'https://script.google.com/macros/s/ВАШ_SCRIPT_ID/exec';
+  </script>
   <script src="js/analytics.js"></script>
+  <script src="js/form.js"></script>
 </body>
 </html>
-
