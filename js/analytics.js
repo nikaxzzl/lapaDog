@@ -82,31 +82,64 @@
             if (!params.service_name) return;
         }
 
-        // ---------- Особые случаи ----------
+        // ---------- FIX: file_download ----------
+        // Отправляем строго один раз и строго с file_name без расширения.
         if (event === 'file_download') {
             var anchor = el.closest('a') || el;
-            if (!anchor.href) return;
-            var fileName = anchor.href.split('/').pop().split('?')[0];
-            params.file_name = params.file_name || fileName;
-            var dot = fileName.lastIndexOf('.');
-            params.file_extension = params.file_extension || (dot > -1 ? fileName.slice(dot + 1).toLowerCase() : '');
+            var href = anchor.href || '';
+
+            // Имя файла из URL, например "pet-kit.pdf"
+            var rawName = href.split('/').pop().split('?')[0] || '';
+
+            // file_name берём из data-file-name, иначе — из URL без расширения
+            var fileName = el.dataset.fileName
+                || rawName.replace(/\.[^.]+$/, '');
+
+            // file_extension берём из data-file-extension, иначе — из URL
+            var dot = rawName.lastIndexOf('.');
+            var ext = el.dataset.fileExtension
+                || (dot > -1 ? rawName.slice(dot + 1).toLowerCase() : '');
+
+            send('file_download', {
+                file_name: fileName,
+                file_extension: ext
+            });
+
+            return; // FIX: важно — не даём отправить событие второй раз ниже
         }
 
+        // ---------- FIX: promo_copy ----------
+        // Событие должно уходить один раз, после успешного копирования (или попытки).
         if (event === 'promo_copy') {
             var code = el.dataset.promoCode || 'VAKCINA';
+
             var fire = function () {
-                params.promo_code = code;
-                send('promo_copy', params);
+                send('promo_copy', { promo_code: code });
             };
+
             if (navigator.clipboard && navigator.clipboard.writeText) {
                 navigator.clipboard.writeText(code).then(fire).catch(fire);
             } else {
+                // Fallback: старый способ копирования
+                try {
+                    var ta = document.createElement('textarea');
+                    ta.value = code;
+                    ta.style.position = 'fixed';
+                    ta.style.opacity = '0';
+                    document.body.appendChild(ta);
+                    ta.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(ta);
+                } catch (err) {
+                    // игнорируем — событие всё равно отправим
+                }
                 fire();
             }
-            return; // не отправляем второй раз ниже
+
+            return; // FIX: не отправляем второй раз ниже
         }
 
-        // ТЗ 4.3: значения параметров не длиннее 100 символов
+        // FIX: остальные события — отправляем как есть, с обрезкой параметров до 100 символов
         for (var p in params) {
             if (params[p] != null) params[p] = String(params[p]).slice(0, 100);
         }
