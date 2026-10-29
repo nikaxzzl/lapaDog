@@ -2,13 +2,13 @@
 
 **Название сценария:** `IG · Vaccine Nov 2026 · Kit Reel`  
 **Статус:** `Live` (Активен)  
-**Целевой медиаресурс:** Reel № 1 
+**Целевой медиаресурс:** Reel № 1
 
 ---
 
 ## Ветка 1: Ключевое слово «АПТЕЧКА»
 
-1. **Триггер (Trigger):** Пользователь оставляет комментарий к конкретному Reel, содержащий ключевое слово `АПТЕЧКА` .
+1. **Триггер (Trigger):** Пользователь оставляет комментарий к конкретному Reel, содержащий ключевое слово `АПТЕЧКА`.
 2. **Автоответ в комментариях (Public Comment Reply):** ManyChat выбирает случайным образом один из трёх вариантов:
    * *Вариант 1:* «Отправили список в личные сообщения 🐾»
    * *Вариант 2:* «Проверьте директ — аптечка уже там»
@@ -17,16 +17,16 @@
    * *Текст:* «Здравствуйте! Это клиника «ЛапаДок». Список «Аптечка кошки и собаки» и промокод на вакцинацию — по кнопке ниже.»
    * *Интерактивный элемент:* Кнопка `Открыть список`
    * *Целевое действие:* Переход по размеченной UTM-ссылке **U-02**:  
-     `https://tz-06-vetklinika-lapadok.vercel.app/contacts.html?utm_source=instagram&utm_medium=social&utm_campaign=vaccine_nov_2026&utm_content=reel_kit_01`
+     `https://tz-06-vetklinika-lapadok.vercel.app/pet-kit.html?utm_source=instagram&utm_medium=social&utm_campaign=vaccine_nov_2026&utm_content=reel_kit_01`
 
 ---
 
 ## Ветка 2: Ключевое слово «ЩЕНОК»
 
 1. **Триггер (Trigger):** Пользователь оставляет комментарий к тому же Reel, содержащий ключевое слово `ЩЕНОК`.
-2. **Автоответ в комментариях (Public Comment Reply):** Выбирается один из вариантов выше с добавлением эмодзи 🐶.
+2. **Автоответ в комментариях (Public Comment Reply):** Выбирается один из вариантов выше с добавлением эмодзи.
 3. **Сообщение в Direct (Instagram Message):**
    * *Текст:* «Календарь прививок для щенка с датами от сегодняшнего дня — по кнопке ниже.»
    * *Интерактивный элемент:* Кнопка `Календарь прививок`
    * *Целевое действие:* Переход по размеченной UTM-ссылке **U-03**:  
-     `https://tz-06-vetklinika-lapadok.vercel.app/contacts.html?utm_source=instagram&utm_medium=social&utm_campaign=puppy_nov_2026&utm_content=reel_kit_01_puppy`
+     `https://tz-06-vetklinika-lapadok.vercel.app/vaccines.html?utm_source=instagram&utm_medium=social&utm_campaign=puppy_nov_2026&utm_content=reel_kit_01_puppy#dog`
