@@ -10,8 +10,11 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
+
+  <!-- GA4: только один раз, без инлайн-дубля -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-XVT5FS2HTK"></script>
-  <script>window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-XVT5FS2HTK');</script>
+  <script src="js/analytics.js"></script>
+  <script src="js/form.js" defer></script>
 </head>
 <body>
   <header class="header">
@@ -51,14 +54,12 @@
           <p><strong>E-mail:</strong> <a href="mailto:vet@lapadok.example" data-event="contact_click" data-contact-type="email">vet@lapadok.example</a></p>
           <p><strong>Режим работы:</strong> круглосуточно, 7 дней в неделю</p>
           
-          <!-- Кнопки мессенджеров (требование ТЗ) -->
           <div style="margin-top: 20px; display: flex; gap: 15px; flex-wrap: wrap;">
             <a href="https://t.me/lapadok_vet" target="_blank" class="btn btn--primary" data-event="messenger_click" data-messenger="telegram">Telegram</a>
             <a href="https://wa.me/79006062424" target="_blank" class="btn btn--outline" data-event="messenger_click" data-messenger="whatsapp">WhatsApp</a>
           </div>
         </div>
         
-        <!-- Ссылка на карту (требование ТЗ: событие map_open) -->
         <div class="contacts__map">
           <a href="https://yandex.ru/maps/?text=Новоозёрск, ул. Луговая, д. 40" target="_blank" data-event="map_open">
             <img src="img/map.png" alt="Карта проезда">
@@ -69,26 +70,38 @@
       <div class="faq__cta" style="max-width: 600px; margin: 0 auto; position: static;">
         <h2 class="section__title" style="font-size: 26px;">Записаться на приём</h2>
         
-        <form id="leadForm" class="faq__form" novalidate>
+        <form id="lead-form" class="faq__form" novalidate>
+          <!-- Скрытые поля: request_id + UTM -->
+          <input type="hidden" name="request_id" id="request_id">
+          <input type="hidden" name="utm_source">
+          <input type="hidden" name="utm_medium">
+          <input type="hidden" name="utm_campaign">
+          <input type="hidden" name="utm_content">
+
           <label for="lf-name">Ваше имя</label>
-          <input id="lf-name" type="text" name="name" placeholder="Иван" required maxlength="60">
+          <input id="lf-name" type="text" name="name" placeholder="Иван" required minlength="2" maxlength="60" autocomplete="name">
+          <span data-error-for="name" hidden></span>
 
           <label for="lf-phone">Телефон</label>
-          <input id="lf-phone" type="tel" name="phone" placeholder="+7 900 000-00-00" required>
+          <input id="lf-phone" type="tel" name="phone" placeholder="+7 900 000-00-00" required autocomplete="tel">
+          <span data-error-for="phone" hidden></span>
 
           <label for="lf-email">E-mail (необязательно)</label>
-          <input id="lf-email" type="email" name="email" placeholder="you@example.com">
+          <input id="lf-email" type="email" name="email" placeholder="you@example.com" autocomplete="email">
+          <span data-error-for="email" hidden></span>
 
           <label>Вид питомца</label>
           <div style="display:flex; gap:12px; flex-wrap:wrap; margin-bottom:12px;">
-            <label><input type="radio" name="pet_type" value="cat" checked> Кошка</label>
+            <label><input type="radio" name="pet_type" value="cat"> Кошка</label>
             <label><input type="radio" name="pet_type" value="dog"> Собака</label>
             <label><input type="radio" name="pet_type" value="rabbit"> Кролик</label>
             <label><input type="radio" name="pet_type" value="other"> Другое</label>
           </div>
+          <span data-error-for="pet_type" hidden></span>
 
           <label for="lf-service">Услуга</label>
           <select id="lf-service" name="service">
+            <option value="">Выберите услугу</option>
             <option value="consult">Первичный приём</option>
             <option value="vaccine">Комплексная вакцинация</option>
             <option value="chip">Чипирование</option>
@@ -96,18 +109,16 @@
             <option value="analysis">Анализы крови / УЗИ</option>
             <option value="home_visit">Вызов врача на дом</option>
           </select>
+          <span data-error-for="service" hidden></span>
 
           <label style="display:flex; align-items:center; gap:10px; margin-top:12px;">
             <input type="checkbox" name="consent" required>
             <span>Согласен с <a href="privacy.html" target="_blank">политикой конфиденциальности</a></span>
           </label>
-
-          <input type="hidden" name="utm_source" value="">
-          <input type="hidden" name="utm_medium" value="">
-          <input type="hidden" name="utm_campaign" value="">
-          <input type="hidden" name="utm_content" value="">
+          <span data-error-for="consent" hidden></span>
 
           <button type="submit" class="btn btn--primary" style="margin-top:16px;">Записаться</button>
+          <span data-error-for="form" hidden></span>
         </form>
       </div>
     </div>
@@ -125,32 +136,24 @@
       <a href="privacy.html">Политика конфиденциальности</a>
     </div>
   </footer>
+
   <script>
     window.LEADS_ENDPOINT = 'https://script.google.com/macros/s/AKfycbx_xmPmIUPE0noOpE4Q52DTV4KvbJJg6ynHFdhmSPv0Hor0Y6pMOGMpwChMOxTyBQ31/exec';
   </script>
-  <script src="js/analytics.js"></script>
-  <script src="js/form.js"></script>
-  
-  <!-- СКРИПТ АВТОЗАПОЛНЕНИЯ -->
+
+  <!-- Автозаполнение: животное и услуга -->
   <script>
     document.addEventListener('DOMContentLoaded', function () {
-      // 1. Подставляем животное, выбранное на главной
       var selectedPet = sessionStorage.getItem('selected_pet');
       if (selectedPet) {
         var radio = document.querySelector('input[name="pet_type"][value="' + selectedPet + '"]');
-        if (radio) {
-          radio.checked = true;
-        }
+        if (radio) radio.checked = true;
       }
-
-      // 2. Подставляем услугу, если перешли по кнопке со страницы услуг
       var urlParams = new URLSearchParams(window.location.search);
       var selectedService = urlParams.get('service');
       if (selectedService) {
         var serviceSelect = document.querySelector('select[name="service"]');
-        if (serviceSelect) {
-          serviceSelect.value = selectedService;
-        }
+        if (serviceSelect) serviceSelect.value = selectedService;
       }
     });
   </script>
