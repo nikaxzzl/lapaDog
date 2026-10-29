@@ -124,35 +124,22 @@
       if (btn) { btn.disabled = true; btn.textContent = 'Отправляем…'; }
       if (window.LapaAnalytics) window.LapaAnalytics.formSubmit('lead_form');
 
-      // ОТПРАВКА ЧЕРЕЗ СКРЫТЫЙ IFRAME
-      var iframeName = 'hidden_iframe_' + Date.now();
-      var iframe = document.createElement('iframe');
-      iframe.name = iframeName;
-      iframe.style.display = 'none';
-      document.body.appendChild(iframe);
-
-      var tempForm = document.createElement('form');
-      tempForm.method = 'POST';
-      tempForm.action = endpoint;
-      tempForm.target = iframeName;
-      tempForm.style.display = 'none';
-
+      // САМЫЙ НАДЕЖНЫЙ СПОСОБ: fetch с no-cors
+      var formData = new FormData();
       for (var key in payload) {
-        var input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = key;
-        input.value = payload[key];
-        tempForm.appendChild(input);
+        formData.append(key, payload[key]);
       }
 
-      document.body.appendChild(tempForm);
-      tempForm.submit();
-
-      setTimeout(function () {
-        document.body.removeChild(tempForm);
-        document.body.removeChild(iframe);
+      fetch(endpoint, {
+        method: 'POST',
+        mode: 'no-cors', // <-- Вот это спасает от всех ошибок CORS
+        body: formData
+      })
+      .then(function () {
+        // При mode: no-cors мы не можем прочитать ответ,
+        // но мы точно знаем, что запрос ушел.
         sessionStorage.removeItem('request_id');
-
+        
         var go = function () {
           window.location.href = 'thanks.html?request_id=' + encodeURIComponent(requestId);
         };
@@ -161,7 +148,13 @@
         } else {
           go();
         }
-      }, 2000);
+      })
+      .catch(function (error) {
+        console.error('Ошибка отправки заявки:', error);
+        showError(btn, 'Не удалось отправить заявку. Проверьте данные и попробуйте ещё раз.');
+        if (window.LapaAnalytics) window.LapaAnalytics.formError('form', 'server');
+        if (btn) { btn.disabled = false; btn.textContent = originalBtnText; }
+      });
     });
   });
 })();
