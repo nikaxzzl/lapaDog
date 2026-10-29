@@ -110,7 +110,7 @@
       var petEl = form.querySelector('[name="pet_type"]:checked');
       var serviceEl = form.querySelector('[name="service"]');
 
-      // Формируем данные для отправки
+      // Собираем данные
       var payload = {
         request_id: requestId,
         name: form.querySelector('[name="name"]').value.trim(),
@@ -127,21 +127,20 @@
       if (btn) { btn.disabled = true; btn.textContent = 'Отправляем…'; }
       if (window.LapaAnalytics) window.LapaAnalytics.formSubmit('lead_form');
 
-      // --- НОВЫЙ СПОСОБ: отправка через скрытый iframe ---
+      // --- ОТПРАВКА ЧЕРЕЗ СКРЫТЫЙ IFRAME (работает в Safari) ---
       var iframeName = 'hidden_iframe_' + Date.now();
       var iframe = document.createElement('iframe');
       iframe.name = iframeName;
       iframe.style.display = 'none';
       document.body.appendChild(iframe);
 
-      // Создаем временную форму, которая отправит данные в iframe
       var tempForm = document.createElement('form');
       tempForm.method = 'POST';
       tempForm.action = endpoint;
       tempForm.target = iframeName;
       tempForm.style.display = 'none';
 
-      // Добавляем все поля в форму
+      // Передаем данные просто как поля формы
       for (var key in payload) {
         var input = document.createElement('input');
         input.type = 'hidden';
@@ -153,16 +152,12 @@
       document.body.appendChild(tempForm);
       tempForm.submit();
 
-      // Через 2 секунды (даем время на отправку) показываем страницу спасибо
+      // Через 2 секунды показываем страницу спасибо
       setTimeout(function () {
-        // Очищаем iframe и форму
         document.body.removeChild(tempForm);
         document.body.removeChild(iframe);
-
-        // Очищаем ID сессии
         sessionStorage.removeItem('request_id');
 
-        // Отправляем событие generate_lead и переходим на thanks.html
         var go = function () {
           window.location.href = 'thanks.html?request_id=' + encodeURIComponent(requestId);
         };
