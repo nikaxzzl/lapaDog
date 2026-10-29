@@ -1,3 +1,7 @@
+Курсовая работа по дисциплине ОП.03 «Информационные технологии», ТЗ № ТЗ-06/2026.
+Исполнитель: Кононова Ника, группа РПО3.
+
+```markdown
 # События GA4 — ТЗ-06/2026
 
 ID ресурса: `G-XVT5FS2HTK`
@@ -11,8 +15,8 @@ ID ресурса: `G-XVT5FS2HTK`
 | 2 | `scroll` | авто | Прокрутка до 90 % | `percent_scrolled` | `js/analytics.js:72` |
 | 3 | `click` | авто | Переход по внешней ссылке | `link_url`, `outbound` | `js/analytics.js:82` |
 | 4 | `file_download` | авто | Скачивание PDF | `file_name`, `file_extension` | `js/analytics.js:90` |
-| 5 | `form_start` | авто | Первое взаимодействие с формой | `form_id` | `js/form.js:86` |
-| 6 | `form_submit` | авто | Отправка формы | `form_id` | `js/form.js:141` |
+| 5 | `form_start` | своё | Первое взаимодействие с формой | `form_id` | `js/form.js:86` |
+| 6 | `form_submit` | своё | Отправка формы | `form_id` | `js/form.js:141` |
 | 7 | `generate_lead` | рекоменд. | Приёмник ответил `ok: true` | `lead_pet_type`, `lead_service`, `lead_source` | `js/form.js:144` |
 | 8 | `cta_click` | своё | Клик по кнопке заявки | `button_name`, `page_section` | `js/analytics.js:48` |
 | 9 | `pet_type_select` | своё | Выбор животного на главной | `pet_type` | `index.html` (data-event) |
@@ -42,7 +46,7 @@ ID ресурса: `G-XVT5FS2HTK`
 | `service_name` | `service_view`, `select_service` | Какая услуга интересует |
 | `age_weeks` | `vaccine_calc` | В каком возрасте ищут прививки |
 | `lead_service` | `generate_lead` | Услуга в заявке |
-| `messenger` | `messenger_click` | Какой мессенджер выбирают|
+| `messenger` | `messenger_click` | Какой мессенджер выбирают |
 
 ## Ключевые события
 
@@ -52,5 +56,5 @@ ID ресурса: `G-XVT5FS2HTK`
 
 - Имена и параметры — `snake_case`, ≤ 40 символов, значения ≤ 100.
 - Персональные данные (имя, телефон, e-mail) в GA4 **не передаются**.
-- `generate_lead` — только после `{"ok": true}` от приёмника. 
+- `generate_lead` — только после `{"ok": true}` от приёмника.
 - При ошибке приёмника — `form_error` с `error_type = "server"`.
