@@ -1,0 +1,81 @@
+request_id,first_name,last_name,phone,email,pet_type,service,status_stage,deal_name,utm_source,utm_medium,utm_campaign,utm_content
+REQ-c2ab88c7-9884-4f30-80db-fb4fec3aa53b,GG,df,+773327773300,bgjhg@ggf.com,rabbit,chip,New lead,GG df — rabbit — chip,direct,none,not_set,not_set
+REQ-c2ab88c7-9884-4f30-80db-fb4fec3aa53b,GG,df,+773327773300,bgjhg@ggf.com,rabbit,chip,New lead,GG df — rabbit — chip,direct,none,not_set,not_set
+REQ-71273569-b221-412a-8d9e-7ab0ec966675,bhbfj,,+777888553322,kwhbflwiyegf@jgaeorigh39y.cor,cat,chip,New lead,bhbfj — cat — chip,direct,none,not_set,not_set
+REQ-af8a0a5f-9a00-4018-93dc-ed39ae3b250c,рром,,+778889994455,dgsa@ss.com,cat,consult,New lead,рром — cat — consult,direct,none,not_set,not_set
+REQ-a016b252-0325-48d4-a53f-73edf54dbdd2,Ирина,Васильева,+779213442266,vasika@yandex.ru,rabbit,consult,New lead,Ирина Васильева — rabbit — consult,direct,none,not_set,not_set
+REQ-89cebec4-0a03-4ae1-8190-d067cf74e812,ррр,,+779282228822,jjj@hdhdh.ckd,dog,chip,New lead,ррр — dog — chip,test,social,test_camp,test_content
+REQ-48d40b75-7dbe-460b-892b-0f95ed6f7703,Рвовоа,,+779425558800,hhdjsjs@hdhshs.dbsns,other,analysis,New lead,Рвовоа — other — analysis,direct,none,not_set,not_set
+REQ-9fbffe75-888a-4c0e-93e1-fe2ab1ea690d,Алиса,,+779128412211,alisikkk@gmail.com,dog,sterilization,New lead,Алиса — dog — sterilization,direct,none,not_set,not_set
+REQ-4281e2d0-babf-4894-9904-d69b61be581c,Ваня,,+779213540055,hhh@hhh.b,dog,chip,New lead,Ваня — dog — chip,direct,none,not_set,not_set
+REQ-fd0d3390-6471-4634-95a2-82cd455309a4,Ваня,,+779213540056,hhh@hhh.b,other,vaccine,New lead,Ваня — other — vaccine,direct,none,not_set,not_set
+REQ-d303ee53-afa1-451d-a3e0-5e51245c55e5,ЗЕБРА,,+779213882404,hdhbe@hdbs.sj,other,sterilization,New lead,ЗЕБРА — other — sterilization,instagram,social,puppy_nov_2026,reel_kit_01_puppy
+REQ-f91fe58e-6a57-4e1a-935b-b3e2bb44569e,пппп,р,+778889997744,gyynj@ffff.nnn,dog,chip,New lead,пппп р — dog — chip,direct,none,not_set,not_set
+REQ-8a641f8d-6fd0-460c-b4ff-174f370ca1c7,Ф,Т,+772889992288,hhhh@jjj.f,dog,chip,New lead,Ф Т — dog — chip,direct,none,not_set,not_set
+REQ-dfcc01c1-0a96-420a-9879-4453b812850b,Toma,M,+773838884477,,cat,vaccine,New lead,Toma M — cat — vaccine,direct,none,not_set,not_set
+REQ-a9e96893-58f7-4d6c-bc4a-b7f684c2a47c,hhh,gg,+779339939933,dn@ffd.ww,dog,home_visit,New lead,hhh gg — dog — home_visit,direct,none,not_set,not_set
+REQ-d5c2c8d9-8616-4311-851d-d2ffd1661aba,hh,f,+773332228832,jjjs@ff.d,cat,analysis,New lead,hh f — cat — analysis,direct,none,not_set,not_set
+REQ-aa513d7e-b7fa-492b-9caa-7a17833cb9d0,hh,f,+773338884499,ggf@dd.ck,rabbit,chip,New lead,hh f — rabbit — chip,direct,none,not_set,not_set
+REQ-6922da2a-2ecc-41bf-94ae-34e68539134f,пп,,+778889993300,jjj@f.fff,dog,vaccine,New lead,пп пп — dog — vaccine,vk,social,vaccine_nov_2026,post_01
+REQ-c03d681b-a524-45dd-9615-a3f807191045,gg,,+778884447744,kkk@d.f,dog,chip,New lead,gg gg — dog — chip,petshop_qr,qr,vaccine_nov_2026,afisha
+REQ-1b4e14bb-4b3f-42a5-bdd6-7e9b87af7181,Тест,,+779991234567,test@example.com,dog,sterilization,New lead,Тест — dog — sterilization,chatgpt.com,none,not_set,not_set
+REQ-2d0245ae-fa0a-4542-8637-50461a8e582f,test,UTM,+779212223399,test@utm.b,dog,vaccine,New lead,test UTM — dog — vaccine,chatgpt.com,test,homework,step6
+REQ-ee50c9e4-3e4a-4fec-9b18-bf9f48bfd1e6,vjchvsj,,+779939393993,yhfbwhf@hhh.d,dog,analysis,New lead,vjchvsj — dog — analysis,direct,none,not_set,not_set
+REQ-4c514275-373e-4ee2-92f3-44c4f1f880be,ЕВА,,+779434447744,jj@e.e,rabbit,vaccine,New lead,ЕВА — rabbit — vaccine,telegraml,qr,vaccine_nov_2026,afisha
+REQ-47c549f1-dd6c-492e-a519-6256d6b22570,Катя,С,+779234443344,kate@ds.c,dog,sterilization,New lead,Катя С — dog — sterilization,youtube,video,vetklinika_lapadok,not_set
+REQ-32c60124-ce3b-4a0f-bd46-cf8a478807ab,Вика,,+772134445577,,dog,home_visit,New lead,Вика — dog — home_visit,telegram,social,vetklinika_lapadok,not_set
+REQ-b22510b2-808e-452e-8d89-205d1cf1766d,Егор,,+779234445566,qqqp@oo.w,other,chip,New lead,Егор — other — chip,vk,social,vetklinika_lapadok,not_set
+REQ-7ec7b75e-bd67-40df-85f9-bf080c4a9cb3,Ева,,+771113339933,ooo@y.u,rabbit,vaccine,New lead,Ева — rabbit — vaccine,instagram,video,vetklinika_lapadok,not_set
+REQ-e7e90cda-d46a-40f6-a9e0-ee70def4c727,HHH,,+777932121344,dj@l.dd,dog,vaccine,New lead,HHH — dog — vaccine,direct,none,not_set,not_set
+REQ-8ed58429-02cf-4ab4-b5ce-96b538ce7a67,Алиса,,+778218882299,hhsh@hh.d,dog,chip,New lead,Алиса — dog — chip,direct,none,not_set,not_set
+REQ-758a28c3-66f1-4e99-84f7-dcac6e684ac0,55,,+778883337722,hhh@n.k,dog,vaccine,New lead,55 — dog — vaccine,direct,none,not_set,not_set
+REQ-e79bbb09-f1a0-4a3c-aedc-b4e86e9f5283,еd,,+778643999222,hh@e.l,dog,vaccine,New lead,еd — dog — vaccine,instagram,social,vaccine_nov_2026,reel_kit_01
+REQ-b739a646-e6d0-45ca-84e4-9913cbea54f7,оооп,,+779999999999,n@hh.g,dog,vaccine,New lead,оооп — dog — vaccine,youtube,video,vaccine_nov_2026,not_set
+REQ-b974718b-5a7e-489a-9333-d52d86eaf46c,Алиса,Иванова,+779237773388,alisa@gmail.com,dog,chip,New lead,Алиса Иванова — dog — chip,instagram,social,vaccine_nov_2026,bio
+REQ-2f9915c4-06f9-4e9d-ac11-19c96d0817de,FFF,,+778888338838,fggfg@rr.rrdf,cat,sterilization,New lead,FFF — cat — sterilization,instagram,social,vaccine_nov_2026,bio
+REQ-687cd9f7-4e8b-44c6-8bb7-10b8feee9dff,ркни3кгра,,+772222222222,hhhdh@dd.f,cat,vaccine,New lead,ркни3кгра — cat — vaccine,vk,social,vaccine_nov_2026,post_01
+REQ-9f894cfd-fc53-4f3a-9a73-0e8900ede8be,kkkkk,,+779381238833,hjjjedd@df.ff,rabbit,sterilization,New lead,kkkkk — rabbit — sterilization,youtube,social,vaccine_nov_2026,video_description
+REQ-925b8bf0-ccb6-4e71-ab5c-5261bf2cdf60,мее,,+771234567891,hhh@d.d,rabbit,vaccine,New lead,мее — rabbit — vaccine,direct,none,not_set,not_set
+REQ-57edc8f3-6898-4a55-b358-1547b2da68fc,аооаотс,аа,+779302338833,nbhfbh@c.c,dog,consult,New lead,аооаотс аа — dog — consult,direct,none,not_set,not_set
+REQ-4eea36b1-01bb-4a9f-b4e2-1d9eb3351897,амиуо,,+773283938283,ggffrf@o.d,dog,chip,New lead,амиуо — dog — chip,direct,none,not_set,not_set
+REQ-02602dc3-ccb1-4e7c-b006-7ad54ba2ae20,HH,dd,+770383338822,fff@dhdh.dd,dog,consult,New lead,HH dd — dog — consult,direct,none,not_set,not_set
+REQ-5853b409-750c-4148-a284-516ca8132ed2,пп,п,+779213598877,hhh@l.e,cat,consult,New lead,пп п — cat — consult,direct,none,not_set,not_set
+REQ-b3d031d5-c1b5-43bb-8935-afcfe03dceee,ппп,п,+779213502680,s@j.d,cat,consult,New lead,ппп п — cat — consult,direct,none,not_set,not_set
+REQ-d43b8165-f861-4290-a8a2-7a73d0dff64e,Кака,,+779213598055,ggg@hh.g,dog,consult,New lead,Кака — dog — consult,direct,none,not_set,not_set
+REQ-6d0b4725-225d-4e53-a446-8d9e97bdb1c7,fff,,+779213502678,gg@j.j,cat,consult,New lead,fff — cat — consult,direct,none,not_set,not_set
+,,,,,,,,,,,,
+,,,,,,,,,,,,
+,,,,,,,,,,,,
+,,,,,,,,,,,,
+,,,,,,,,,,,,
+,,,,,,,,,,,,
+,,,,,,,,,,,,
+,,,,,,,,,,,,
+,,,,,,,,,,,,
+,,,,,,,,,,,,
+,,,,,,,,,,,,
+,,,,,,,,,,,,
+,,,,,,,,,,,,
+,,,,,,,,,,,,
+,,,,,,,,,,,,
+,,,,,,,,,,,,
+,,,,,,,,,,,,
+,,,,,,,,,,,,
+,,,,,,,,,,,,
+,,,,,,,,,,,,
+,,,,,,,,,,,,
+,,,,,,,,,,,,
+,,,,,,,,,,,,
+,,,,,,,,,,,,
+,,,,,,,,,,,,
+,,,,,,,New lead,,,,,%
+REQ-5dceec21-fa88-4d1f-9a01-96f34abf0c2a,hhhh@ll.ww,,+779212229922,s@w.w,dog,consult,New lead,hhhh@ll.ww — dog — consult,direct,none,not_set,not_set
+REQ-cc05c755-5d66-4790-a71d-f2ed7f1f300a,as,d,+771234567891,w@j.s,dog,consult,New lead,as d — dog — consult,direct,none,not_set,not_set
+REQ-cc05c755-5d66-4790-a71d-f2ed7f1f300a,as,d,+771234567891,w@j.s,dog,consult,New lead,as d — dog — consult,direct,none,not_set,not_set
+REQ-742f5c61-45bc-4ef9-a17c-b17d6a7e16c9,Ева,,+779993339993,,cat,consult,New lead,Ева — cat — consult,direct,none,not_set,not_set
+REQ-db26add9-aee4-4652-9c5d-2ca03f17b8e4,Арина,,+779991112233,,cat,home_visit,New lead,Арина — cat — home_visit,direct,none,not_set,not_set
+REQ-db26add9-aee4-4652-9c5d-2ca03f17b8e4,Арина,,+779991112233,,cat,home_visit,New lead,Арина — cat — home_visit,direct,none,not_set,not_set
+REQ-e7cd3f5b-292a-4a2d-b412-31170b6f79d1,РР,,+771233211221,d@d.d,cat,vaccine,New lead,РР — cat — vaccine,direct,none,not_set,not_set
+REQ-e7cd3f5b-292a-4a2d-b412-31170b6f79d1,РР,,+771233211221,d@d.d,cat,vaccine,New lead,РР — cat — vaccine,direct,none,not_set,not_set
+REQ-3bc155b0-27ac-481c-8ba3-f5bd9011a7b5,аа,в,+779213218822,в@dd.d,cat,consult,New lead,аа в — cat — consult,direct,none,not_set,not_set
+REQ-3bc155b0-27ac-481c-8ba3-f5bd9011a7b5,аа,в,+779213218822,в@dd.d,cat,consult,New lead,аа в — cat — consult,direct,none,not_set,not_set
