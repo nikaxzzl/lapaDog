@@ -17,7 +17,7 @@
 | Таблица заявок | https://docs.google.com/spreadsheets/d/1k8PA1CkCwjY_hQaVpb9vShLfIKEiV_G_ti86mwSy5Q8/edit?gid=0#gid=0 |
 | Дашборд Looker Studio (Data Studio) | https://datastudio.google.com/u/0/reporting/cddf4c15-4af3-4426-8722-7805f114949e/page/0aGCG |
 | Instagram и Reel с автоответом | https://www.instagram.com/klausl19/?hl=ru и https://www.instagram.com/p/De8E6ZMB6vk/?hl=ru |
-| ВКонтакте · Telegram · YouTube | https://tz-06-vetklinika-lapadok.vercel.app/?utm_source=vk&utm_medium=social&utm_campaign=vaccine_nov_2026 · https://tz-06-vetklinika-lapadok.vercel.app/?utm_source=telegram&utm_medium=social&utm_campaign=vaccine_nov_2026 · https://tz-06-vetklinika-lapadok.vercel.app/?utm_source=youtube&utm_medium=video&utm_campaign=vaccine_nov_2026 |
+| ВКонтакте · Telegram · YouTube | https://tz-06-vetklinika-lapadok.vercel.app/vaccines.html?utm_source=vk&utm_medium=social&utm_campaign=vaccine_nov_2026&utm_content=post_01 · https://tz-06-vetklinika-lapadok.vercel.app/vaccines.html?utm_source=telegram&utm_medium=social&utm_campaign=vaccine_nov_2026&utm_content=post_01 · https://tz-06-vetklinika-lapadok.vercel.app/pet-kit.html?utm_source=youtube&utm_medium=social&utm_campaign=vaccine_nov_2026&utm_content=video_description |
 | Описание работы | [docs/opisanie.md](docs/opisanie.md) |
 | Презентация к защите | [presentation/zashchita.pdf](presentation/zashchita.pdf) |
 
