@@ -12,7 +12,6 @@
     var endpoint = window.LEADS_ENDPOINT || '';
     var consentEl = form.querySelector('[name="consent"]');
 
-    // --- Сбор UTM-меток ---
     (function captureUtm() {
       var keys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content'];
       var params = new URLSearchParams(window.location.search);
@@ -22,7 +21,6 @@
       });
     })();
 
-    // --- Защита от повторной отправки ---
     var requestId = sessionStorage.getItem('request_id');
     if (!requestId) {
       if (window.crypto && typeof window.crypto.randomUUID === 'function') {
@@ -110,7 +108,6 @@
       var petEl = form.querySelector('[name="pet_type"]:checked');
       var serviceEl = form.querySelector('[name="service"]');
 
-      // Собираем данные
       var payload = {
         request_id: requestId,
         name: form.querySelector('[name="name"]').value.trim(),
@@ -127,7 +124,7 @@
       if (btn) { btn.disabled = true; btn.textContent = 'Отправляем…'; }
       if (window.LapaAnalytics) window.LapaAnalytics.formSubmit('lead_form');
 
-      // --- ОТПРАВКА ЧЕРЕЗ СКРЫТЫЙ IFRAME (работает в Safari) ---
+      // ОТПРАВКА ЧЕРЕЗ СКРЫТЫЙ IFRAME
       var iframeName = 'hidden_iframe_' + Date.now();
       var iframe = document.createElement('iframe');
       iframe.name = iframeName;
@@ -140,7 +137,6 @@
       tempForm.target = iframeName;
       tempForm.style.display = 'none';
 
-      // Передаем данные просто как поля формы
       for (var key in payload) {
         var input = document.createElement('input');
         input.type = 'hidden';
@@ -152,7 +148,6 @@
       document.body.appendChild(tempForm);
       tempForm.submit();
 
-      // Через 2 секунды показываем страницу спасибо
       setTimeout(function () {
         document.body.removeChild(tempForm);
         document.body.removeChild(iframe);
