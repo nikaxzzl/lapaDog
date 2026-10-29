@@ -12,9 +12,9 @@
 | Дашборд Looker Studio | https://datastudio.google.com/u/0/reporting/cddf4c15-4af3-4426-8722-7805f114949e |
 | Instagram | https://www.instagram.com/klausl19/ |
 | Reel с автоответами | https://www.instagram.com/p/De8E6ZMB6vk/ |
-| ВКонтакте | https://vk.com/... (вставь ссылку на пост) |
-| Telegram | https://t.me/... (вставь ссылку на пост) |
-| YouTube | https://youtu.be/... (вставь ссылку на видео) |
+| ВКонтакте | https://vk.com/lapadok_vet |
+| Telegram | https://t.me/lapadok_vet |
+| YouTube | https://youtube.com/@lapadok_vet |
 
 ## Google Analytics 4
 
@@ -50,7 +50,6 @@
 
 ## Структура репозитория
 
-
 Вся техническая документация и результаты тестов сохранены в репозитории согласно разделу 12 ТЗ:
 
 ```text
@@ -78,7 +77,6 @@ tz-06-vetklinika-lapadok/
 ## Документация (Папка docs/)
 
 * `docs/opisanie.md` - Описание работы с кадрами (по шаблону курса).
-* `docs/scheme.png` - Схема работы (путь посетителя и данных).
 * `docs/prompts.md` - Журнал хронологических запросов к нейросети и описание ручных правок кода.
 * `docs/events.md` - Реестр и спецификация отправляемых событий GA4 (18 обязательных и 1 по выбору).
 * `docs/utm.csv` - Заполненный реестр из 12 UTM-ссылок (U-01 — U-12) с формульной сборкой адресов.
