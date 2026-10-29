@@ -42,7 +42,7 @@ ID ресурса: `G-XVT5FS2HTK`
 | `service_name` | `service_view`, `select_service` | Какая услуга интересует |
 | `age_weeks` | `vaccine_calc` | В каком возрасте ищут прививки |
 | `lead_service` | `generate_lead` | Услуга в заявке |
-| `messenger` | `messenger_click` | Какой мессенджер выбирают |
+| `messenger` | `messenger_click` | Какой мессенджер выбирают|
 
 ## Ключевые события
 
@@ -52,5 +52,5 @@ ID ресурса: `G-XVT5FS2HTK`
 
 - Имена и параметры — `snake_case`, ≤ 40 символов, значения ≤ 100.
 - Персональные данные (имя, телефон, e-mail) в GA4 **не передаются**.
-- `generate_lead` — только после `{"ok": true}` от приёмника.
+- `generate_lead` — только после `{"ok": true}` от приёмника. 
 - При ошибке приёмника — `form_error` с `error_type = "server"`.
