@@ -1,9 +1,8 @@
-# Описание работы · ТЗ № ТЗ-06/2026 · «08» октября 2026 
+# Описание работы · ТЗ № ТЗ-06/2026 · «08» октября 2026
 
-**Исполнитель:** студент, группа (укажите вашу группу и ФИО)
+**Исполнитель:** Кононова Ника, группа РПО3
 **Сайт:** https://tz-06-vetklinika-lapadok.vercel.app
-**Период проверок:** 08.10.2026 — 29.10.2026 
-
+**Период проверок:** 08.10.2026 — 29.10.2026
 
 
 ## 1. Задача заказчика
@@ -62,7 +61,7 @@ flowchart LR
 В реестре 12 ссылок, опубликованы в четырёх соцсетях (Instagram, ВКонтакте, Telegram,
 YouTube), у двух партнёров и на афише с QR-кодом.
 
-![Реестр ссылок](../screens/utm/registry.png)
+![Реестр ссылок](../screens/utm/test-u-12.png)
 ![Источники в Traffic acquisition](../screens/utm/traffic-acquisition.png)
 
 ## 6. Заявки
@@ -86,8 +85,8 @@ YouTube), у двух партнёров и на афише с QR-кодом.
 Воронка показала наибольшую потерю между  входа на сайт (page_view) и выбором животного (pet_type_select).
 Больше всего заявок принёс канал Instagram.
 
-![Воронка в Explore](../screens/explore/funnel-open.png)
-![Дашборд DataLens, вкладка «Кампании»](../screens/datalens/campaigns.png)
+![Воронка в Explore](../screens/ga4/funnel-closed-device.png)
+![Дашборд DataLens, вкладка «Кампании»](../screens/datastudio/page-traffic.png)
 
 ## 9. Что получил бизнес
 
