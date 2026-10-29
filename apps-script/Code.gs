@@ -1,282 +1,36 @@
-/**
- * LapaDok — приёмник заявок (ТЗ-06/2026, раздел 6).
- */
-
-// ⚠️ ЗАМЕНИТЕ НА ID ВАШЕЙ ТАБЛИЦЫ (длинный набор букв и цифр из адресной строки)
-var SPREADSHEET_ID = 'ВСТАВЬТЕ_ID_ТАБЛИЦЫ';
-var SHEET_NAME = 'leads';
-
-var HEADERS = [
-  'request_id', 'created_at', 'name', 'phone', 'email',
-  'pet_type', 'service', 'utm_source', 'utm_medium',
-  'utm_campaign', 'utm_content', 'status'
-];
-
-var ALLOWED_PET = ['cat', 'dog', 'rabbit', 'other'];
-var ALLOWED_SERVICE = ['consult', 'vaccine', 'chip', 'sterilization', 'analysis', 'home_visit'];
-var ALLOWED_STATUS = ['new', 'contacted', 'appointment', 'visited', 'lost'];
-
-// ============================================================
-// ПРИЁМ ЗАЯВКИ
-// ============================================================
-function doPost(e) {
-  try {
-    if (!e || !e.postData || !e.postData.contents) {
-      return json({ ok: false, error: 'empty_request' });
-    }
-
-    var data;
-    try {
-      data = JSON.parse(e.postData.contents);
-    } catch (parseErr) {
-      return json({ ok: false, error: 'invalid_json' });
-    }
-
-    if (SPREADSHEET_ID === 'ВСТАВЬТЕ_ID_ТАБЛИЦЫ') {
-      return json({ ok: false, error: 'server: SPREADSHEET_ID is not set' });
-    }
-
-    var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-    var sheet = ss.getSheetByName(SHEET_NAME);
-    if (!sheet) return json({ ok: false, error: 'sheet_not_found' });
-
-    // 1. Валидация
-    var err = validate(data);
-    if (err) return json({ ok: false, error: err });
-
-    // 2. Дедупликация
-    if (requestIdExists(sheet, data.request_id)) {
-      return json({ ok: false, error: 'duplicate_request_id' });
-    }
-
-    // 3. Запись
-    var row = [
-      String(data.request_id),
-      new Date(),
-      String(data.name).trim(),
-      String(data.phone).trim(),
-      data.email ? String(data.email).trim() : '',
-      data.pet_type,
-      data.service,
-      data.utm_source || 'direct',
-      data.utm_medium || 'none',
-      data.utm_campaign || 'not_set',
-      data.utm_content || 'not_set',
-      'new'
-    ];
-    sheet.appendRow(row);
-
-    return json({ ok: true, request_id: data.request_id });
-  } catch (err) {
-    return json({ ok: false, error: 'server: ' + err.message });
-  }
-}
-
-// ============================================================
-// ВАЛИДАЦИЯ
-// ============================================================
-function validate(d) {
-  if (!d || typeof d !== 'object') return 'empty_request';
-
-  if (!d.request_id || String(d.request_id).length > 200) return 'request_id';
-  if (!d.name || String(d.name).trim().length < 2 || String(d.name).trim().length > 60) return 'name';
-  if (!d.phone || !/^\+7\d{10}$/.test(String(d.phone))) return 'phone';
-  if (d.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(d.email))) return 'email';
-  if (ALLOWED_PET.indexOf(d.pet_type) === -1) return 'pet_type';
-  if (ALLOWED_SERVICE.indexOf(d.service) === -1) return 'service';
-
-  var utmFields = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content'];
-  for (var i = 0; i < utmFields.length; i++) {
-    var v = d[utmFields[i]];
-    if (v && String(v).length > 200) return utmFields[i];
-  }
-
-  return null;
-}
-
-// ============================================================
-// ПРОВЕРКА ДУБЛИКАТА
-// ============================================================
-function requestIdExists(sheet, requestId) {
-  var lastRow = sheet.getLastRow();
-  if (lastRow < 2) return false;
-  var ids = sheet.getRange(2, 1, lastRow - 1, 1).getValues();
-  for (var i = 0; i < ids.length; i++) {
-    if (String(ids[i][0]) === String(requestId)) return true;
-  }
-  return false;
-}
-
-// ============================================================
-// ОТВЕТ В JSON
-// ============================================================
-function json(obj) {
-  return ContentService
-    .createTextOutput(JSON.stringify(obj))
-    .setMimeType(ContentService.MimeType.JSON);
-}
-
-// ============================================================
-// ИНИЦИАЛИЗАЦИЯ ТАБЛИЦЫ (Запустить 1 раз вручную)
-// ============================================================
-function setupSheet() {
-  if (SPREADSHEET_ID === 'ВСТАВЬТЕ_ID_ТАБЛИЦЫ') {
-    SpreadsheetApp.getUi().alert('Сначала укажите SPREADSHEET_ID в начале кода.');
-    return;
-  }
-
-  var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-  var sheet = ss.getSheetByName(SHEET_NAME);
-
-  if (sheet && sheet.getLastRow() > 1) {
-    var ok = SpreadsheetApp.getUi().alert(
-      'В листе «leads» уже есть данные. Очистить и пересоздать?',
-      SpreadsheetApp.getUi().ButtonSet.YES_NO
-    );
-    if (ok !== SpreadsheetApp.getUi().Button.YES) return;
-  }
-
-  sheet = sheet || ss.insertSheet(SHEET_NAME);
-  sheet.clear();
-
-  // Заголовки
-  sheet.getRange(1, 1, 1, HEADERS.length).setValues([HEADERS]);
-  sheet.getRange(1, 1, 1, HEADERS.length)
-    .setFontWeight('bold')
-    .setBackground('#2E8B57')
-    .setFontColor('#FFFFFF');
-  sheet.setFrozenRows(1);
-  sheet.autoResizeColumns(1, HEADERS.length);
-
-  // Выпадающий список status
-  var statusRule = SpreadsheetApp.newDataValidation()
-    .requireValueInList(ALLOWED_STATUS, true)
-    .setAllowInvalid(false)
-    .build();
-  sheet.getRange(2, 12, 1000, 1).setDataValidation(statusRule);
-
-  // Подсветка пустых обязательных ячеек
-  var requiredColumns = [1, 2, 3, 4, 6, 7, 8, 9, 10, 11, 12];
-  var emptyRule = SpreadsheetApp.newConditionalFormatRule()
-    .whenFormulaSatisfied('=AND($A2<>"", OR(' +
-      requiredColumns.map(function (c) {
-        var col = columnLetter(c);
-        return 'LEN(TRIM(' + col + '2))=0';
-      }).join(',') + '))')
-    .setBackground('#FDE2E1')
-    .setRanges([sheet.getRange(2, 1, 1000, HEADERS.length)])
-    .build();
-  sheet.setConditionalFormatRules([emptyRule]);
-
-  // Подсветка дубликатов request_id
-  var dupRule = SpreadsheetApp.newConditionalFormatRule()
-    .whenFormulaSatisfied('=AND($A2<>"", COUNTIF($A:$A, $A2) > 1)')
-    .setBackground('#F9CB9C')
-    .setRanges([sheet.getRange(2, 1, 1000, 1)])
-    .build();
-  sheet.setConditionalFormatRules([emptyRule, dupRule]);
-
-  SpreadsheetApp.getUi().alert('Лист «leads» создан и настроен.');
-}
-
-// ============================================================
-// НОМЕР СТОЛБЦА → БУКВА
-// ============================================================
-function columnLetter(num) {
-  var letter = '';
-  while (num > 0) {
-    var rem = (num - 1) % 26;
-    letter = String.fromCharCode(65 + rem) + letter;
-    num = Math.floor((num - 1) / 26);
-  }
-  return letter;
-}
-
-// ============================================================
-// ЛИСТ crm_import (Запустить 1 раз после setupSheet)
-// ============================================================
-function setupCrmImport() {
-  if (SPREADSHEET_ID === 'ВСТАВЬТЕ_ID_ТАБЛИЦЫ') {
-    SpreadsheetApp.getUi().alert('Сначала укажите SPREADSHEET_ID в начале кода.');
-    return;
-  }
-
-  var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-  var sheet = ss.getSheetByName('crm_import') || ss.insertSheet('crm_import');
-  sheet.clear();
-
-  var headers = [
-    'request_id', 'created_at', 'email', 'first_name', 'last_name',
-    'phone_e164', 'pet_type', 'service', 'deal_stage', 'deal_name',
-    'utm_source', 'utm_medium', 'utm_campaign', 'utm_content'
-  ];
-  sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
-  sheet.getRange(1, 1, 1, headers.length)
-    .setFontWeight('bold')
-    .setBackground('#2E8B57')
-    .setFontColor('#FFFFFF');
-  sheet.setFrozenRows(1);
-
-  var formulas = [
-    '=IFERROR(Leads!A2,"")',
-    '=IFERROR(Leads!B2,"")',
-    '=IFERROR(Leads!E2,"")',
-    '=IFERROR(IF(Leads!C2="","",TRIM(LEFT(Leads!C2,FIND(" ",Leads!C2&" ")-1))),"")',
-    '=IFERROR(IF(Leads!C2="","",TRIM(SUBSTITUTE(Leads!C2,D2,""))),"")',
-    '=IFERROR(IF(Leads!D2="","",IF(LEFT(Leads!D2,2)="+7",Leads!D2,"+7"&SUBSTITUTE(Leads!D2,"+7",""))),"")',
-    '=IFERROR(Leads!F2,"")',
-    '=IFERROR(Leads!G2,"")',
-    '=IFERROR(VLOOKUP(Leads!L2,{"new","New lead";"contacted","Contacted";"appointment","Appointment booked";"visited","Closed won";"lost","Closed lost"},2,FALSE),"")',
-    '=IFERROR(IF(D2="","",D2&" — "&G2&" — "&H2),"")',
-    '=IFERROR(Leads!H2,"")',
-    '=IFERROR(Leads!I2,"")',
-    '=IFERROR(Leads!J2,"")',
-    '=IFERROR(Leads!K2,"")'
-  ];
-
-  for (var i = 0; i < formulas.length; i++) {
-    var col = columnLetter(i + 1);
-    sheet.getRange(col + '2:' + col + '1000').setFormula(formulas[i]);
-  }
-
-  sheet.autoResizeColumns(1, headers.length);
-  SpreadsheetApp.getUi().alert('Лист «crm_import» создан и настроен.');
-}
-/**
- * Приёмник заявок с сайта ветклиники «Лападок».
- * Принимает POST (JSON), валидирует, пишет в лист leads.
- * ТЗ-06/2026, раздел 6.2.
- */
-
-// ID таблицы — допускается в коде по ТЗ. Пароли и ключи — нет.
 const SPREADSHEET_ID = '1k8PA1CkCwjY_hQaVpb9vShLfIKEiV_G_ti86mwSy5Q8';
 const SHEET_NAME = 'leads';
 
 function doPost(e) {
   try {
-    // 1. Разбор тела запроса
-    if (!e || !e.postData || !e.postData.contents) {
+    var data;
+
+    // Проверяем, как пришли данные: как параметры формы или как JSON
+    if (e.parameter && e.parameter.json_data) {
+      data = JSON.parse(e.parameter.json_data);
+    } else if (e.parameter && e.parameter.request_id) {
+      data = e.parameter; // Если данные пришли просто полями формы
+    } else if (e.postData && e.postData.contents) {
+      data = JSON.parse(e.postData.contents); // Если пришел JSON (fetch)
+    } else {
       return json({ ok: false, error: 'Пустой запрос' });
     }
-    const data = JSON.parse(e.postData.contents);
 
-    const sheet = SpreadsheetApp
-      .openById(SPREADSHEET_ID)
-      .getSheetByName(SHEET_NAME);
+    const sheet = SpreadsheetApp.openById(SPREADSHEET_ID).getSheetByName(SHEET_NAME);
 
-    // 2. Защита от дублей по request_id
+    // Защита от дублей
     if (isDuplicate(sheet, data.request_id)) {
       return json({ ok: true, request_id: data.request_id, duplicate: true });
     }
 
-    // 3. Валидация
+    // Валидация
     const err = validate(data);
     if (err) return json({ ok: false, error: err });
 
-    // 4. Запись строки. status из браузера игнорируется — всегда 'new'.
+    // Запись
     sheet.appendRow([
       data.request_id,
-      new Date(),                                  // created_at
+      new Date(),
       data.name.trim(),
       data.phone.trim(),
       (data.email || '').trim(),
@@ -296,9 +50,6 @@ function doPost(e) {
   }
 }
 
-/**
- * Проверка, есть ли уже такой request_id в столбце A.
- */
 function isDuplicate(sheet, requestId) {
   if (!requestId) return false;
   const lastRow = sheet.getLastRow();
@@ -307,9 +58,6 @@ function isDuplicate(sheet, requestId) {
   return ids.indexOf(requestId) !== -1;
 }
 
-/**
- * Валидация полей. Возвращает null, если всё ок, иначе строку с ошибкой.
- */
 function validate(d) {
   const required = ['request_id', 'name', 'phone', 'pet_type', 'service'];
   for (const f of required) {
@@ -317,81 +65,76 @@ function validate(d) {
       return 'Поле «' + f + '» обязательно';
     }
   }
-
-  // Длина строк не более 200 символов
-  const allFields = ['request_id', 'name', 'phone', 'email',
-                     'pet_type', 'service', 'utm_source',
-                     'utm_medium', 'utm_campaign', 'utm_content'];
+  
+  const allFields = ['request_id', 'name', 'phone', 'email', 'pet_type', 'service', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_content'];
   for (const f of allFields) {
     if (d[f] && String(d[f]).length > 200) {
       return 'Поле «' + f + '» длиннее 200 символов';
     }
   }
-
-  // Имя: 2–60 символов
+  
   const name = String(d.name).trim();
   if (name.length < 2 || name.length > 60) {
     return 'Имя должно быть от 2 до 60 символов';
   }
-
-  // Телефон: +7 и 10 цифр
-  if (!/^\+7\d{10}$/.test(String(d.phone).trim())) {
+  
+  // Телефон может прийти с плюсом или без
+  const cleanPhone = String(d.phone).replace(/\D/g, '');
+  if (cleanPhone.length !== 11 || cleanPhone.charAt(0) !== '7') {
     return 'Телефон должен быть в формате +7XXXXXXXXXX';
   }
-
-  // E-mail: проверяем, только если передан
+  
   const email = (d.email || '').trim();
   if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     return 'Некорректный e-mail';
   }
-
-  // Списки
-  const petTypes = ['cat', 'dog', 'rabbit', 'other'];
-  if (petTypes.indexOf(d.pet_type) === -1) {
+  
+  if (['cat', 'dog', 'rabbit', 'other'].indexOf(d.pet_type) === -1) {
     return 'Недопустимый pet_type';
   }
-
-  const services = ['consult', 'vaccine', 'chip', 'sterilization',
-                    'analysis', 'home_visit'];
-  if (services.indexOf(d.service) === -1) {
+  
+  if (['consult', 'vaccine', 'chip', 'sterilization', 'analysis', 'home_visit'].indexOf(d.service) === -1) {
     return 'Недопустимый service';
   }
-
+  
   return null;
 }
 
-/**
- * Хелпер для JSON-ответа.
- */
 function json(obj) {
   return ContentService
     .createTextOutput(JSON.stringify(obj))
     .setMimeType(ContentService.MimeType.JSON);
 }
 
-/**
- * Тестовая функция для запуска из редактора (кнопка Run).
- * Создаёт фейковый запрос и логирует результат.
- * ВАЖНО: перед сдачей удалите её или уберите данные из таблицы.
- */
-function testDoPost() {
-  const fakeEvent = {
-    postData: {
-      contents: JSON.stringify({
-        request_id: 'REQ-test-' + Date.now(),
-        name: 'Тест Тестович',
-        phone: '+79991234567',
-        email: 'test@example.com',
-        pet_type: 'cat',
-        service: 'vaccine',
-        utm_source: 'instagram',
-        utm_medium: 'social',
-        utm_campaign: 'vaccine_nov_2026',
-        utm_content: 'reel_kit_01',
-        status: 'new',
-      }),
-    },
-  };
-  const res = doPost(fakeEvent);
-  Logger.log(res.getContent());
+// Функция для создания листа CRM (оставляем без изменений)
+function createCrmImport() {
+  var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  var sheet = ss.getSheetByName('crm_import');
+  
+  if (!sheet) {
+    sheet = ss.insertSheet('crm_import');
+  }
+  sheet.clear();
+  
+  var headers = ['request_id', 'first_name', 'last_name', 'phone', 'email', 'pet_type', 'service', 'status_stage', 'deal_name', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_content'];
+  sheet.getRange(1, 1, 1, headers.length).setValues([headers]).setFontWeight('bold');
+  
+  var formulas = [
+    '=ARRAYFORMULA(IF(leads!A2:A=""; ""; leads!A2:A))',
+    '=ARRAYFORMULA(IF(leads!C2:C=""; ""; INDEX(SPLIT(СЖПРОБЕЛЫ(leads!C2:C); " "); 1)))',
+    '=ARRAYFORMULA(IF(leads!C2:C=""; ""; IFERROR(INDEX(SPLIT(СЖПРОБЕЛЫ(leads!C2:C); " "); 2); "")))',
+    '=ARRAYFORMULA(IF(leads!D2:D=""; ""; "+7"&REGEXREPLACE(REGEXREPLACE(leads!D2:D; "[^0-9]"; ""); "^8"; "")))',
+    '=ARRAYFORMULA(IF(leads!E2:E=""; ""; leads!E2:E))',
+    '=ARRAYFORMULA(IF(leads!F2:F=""; ""; leads!F2:F))',
+    '=ARRAYFORMULA(IF(leads!G2:G=""; ""; leads!G2:G))',
+    '=ARRAYFORMULA(IF(leads!L2:L=""; ""; ВПР(leads!L2:L; {"new"\\"New lead"; "contacted"\\"Contacted"; "appointment"\\"Appointment booked"; "visited"\\"Closed won"; "lost"\\"Closed lost"}; 2; ЛОЖЬ)))',
+    '=ARRAYFORMULA(IF(leads!C2:C=""; ""; leads!C2:C & " — " & leads!F2:F & " — " & leads!G2:G))',
+    '=ARRAYFORMULA(IF(leads!H2:H=""; ""; leads!H2:H))',
+    '=ARRAYFORMULA(IF(leads!I2:I=""; ""; leads!I2:I))',
+    '=ARRAYFORMULA(IF(leads!J2:J=""; ""; leads!J2:J))',
+    '=ARRAYFORMULA(IF(leads!K2:K=""; ""; leads!K2:K))'
+  ];
+  
+  sheet.getRange(2, 1, 1, formulas.length).setFormulas([formulas]);
+  SpreadsheetApp.getUi().alert('Готово! Лист crm_import создан и заполнен формулами.');
 }

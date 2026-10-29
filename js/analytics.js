@@ -1,131 +1,172 @@
-// js/analytics.js
+/* js/form.js — отправка заявки на Apps Script + события GA4 */
 
 (function () {
-    'use strict';
+  'use strict';
 
+  document.addEventListener('DOMContentLoaded', function () {
+    var form = document.getElementById('leadForm');
+    if (!form) return;
+
+    var btn = form.querySelector('button[type="submit"]');
+    var originalBtnText = btn ? btn.textContent : 'Отправить заявку';
+    var endpoint = window.LEADS_ENDPOINT || '';
+    var consentEl = form.querySelector('[name="consent"]');
+
+    // --- Сбор UTM-меток ---
     (function captureUtm() {
-        var keys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content'];
-        var urlParams = new URLSearchParams(window.location.search);
-        keys.forEach(function (key) {
-            var v = urlParams.get(key);
-            if (v) sessionStorage.setItem(key, v);
-        });
+      var keys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content'];
+      var params = new URLSearchParams(window.location.search);
+      keys.forEach(function (key) {
+        var value = params.get(key);
+        if (value) sessionStorage.setItem(key, value);
+      });
     })();
 
-    function send(event, params, callback) {
-        if (typeof gtag !== 'function') {
-            if (callback) callback();
-            return;
-        }
-        gtag('event', event, Object.assign({}, params || {}, {
-            event_callback: callback || undefined
-        }));
+    // --- Защита от повторной отправки ---
+    var requestId = sessionStorage.getItem('request_id');
+    if (!requestId) {
+      if (window.crypto && typeof window.crypto.randomUUID === 'function') {
+        requestId = 'REQ-' + window.crypto.randomUUID();
+      } else {
+        requestId = 'REQ-' + Date.now() + '-' + Math.random().toString(36).slice(2);
+      }
+      sessionStorage.setItem('request_id', requestId);
     }
 
-    window.LapaAnalytics = {
-        send: send,
-        formStart: function (id) { send('form_start', { form_id: id || 'lead_form' }); },
-        formSubmit: function (id) { send('form_submit', { form_id: id || 'lead_form' }); },
-        generateLead: function (pet, service, source, callback) {
-            send('generate_lead', { lead_pet_type: pet, lead_service: service, lead_source: source }, callback);
-        },
-        formError: function (field, type) {
-            send('form_error', { field_name: field, error_type: type });
-        },
-        vaccineCalc: function (pet, age) {
-            send('vaccine_calc', { pet_type: pet, age_weeks: age });
-        }
-    };
+    function getUtm(key, fallback) {
+      return sessionStorage.getItem(key) || fallback;
+    }
 
-    document.addEventListener('click', function (e) {
-        var target = e.target;
-        if (!target || !target.closest) return;
-        var el = target.closest('[data-event]');
-        if (!el) return;
+    function normalizePhone(raw) {
+      var digits = String(raw || '').replace(/\D/g, '');
+      if (digits.length === 11 && digits.charAt(0) === '8') digits = '7' + digits.slice(1);
+      if (digits.length === 10) digits = '7' + digits;
+      return digits.length === 11 && digits.charAt(0) === '7' ? '+' + digits : null;
+    }
 
-        var event = el.dataset.event;
-        if (event === 'faq_open') return;
-        if (event === 'pet_type_select') return;
-
-        var params = {};
-        for (var key in el.dataset) {
-            if (key === 'event') continue;
-            var snake = key.replace(/([A-Z])/g, '_$1').toLowerCase();
-            params[snake] = el.dataset[key];
-        }
-
-        if (event === 'cta_click') { if (!params.button_name || !params.page_section) return; }
-        if (event === 'contact_click') { params.contact_type = params.contact_type || 'phone'; }
-        if (event === 'messenger_click') { if (!params.messenger) return; }
-        if (event === 'social_click') { if (!params.network) return; params.page_section = params.page_section || 'footer'; }
-        if (event === 'select_service') { if (!params.service_name) return; }
-
-        if (event === 'file_download') {
-            var anchor = el.closest('a') || el;
-            var href = anchor.href || '';
-            var rawName = href.split('/').pop().split('?')[0] || '';
-            var fileName = el.dataset.fileName || rawName.replace(/\.[^.]+$/, '');
-            var dot = rawName.lastIndexOf('.');
-            var ext = el.dataset.fileExtension || (dot > -1 ? rawName.slice(dot + 1).toLowerCase() : '');
-            send('file_download', { file_name: fileName, file_extension: ext });
-            return;
-        }
-
-        if (event === 'promo_copy') {
-            var code = el.dataset.promoCode || 'VAKCINA';
-            var fire = function () { send('promo_copy', { promo_code: code }); };
-            if (navigator.clipboard && navigator.clipboard.writeText) {
-                navigator.clipboard.writeText(code).then(fire).catch(fire);
-            } else {
-                try {
-                    var ta = document.createElement('textarea');
-                    ta.value = code; ta.style.position = 'fixed'; ta.style.opacity = '0';
-                    document.body.appendChild(ta); ta.select();
-                    document.execCommand('copy'); document.body.removeChild(ta);
-                } catch (err) {}
-                fire();
-            }
-            return;
-        }
-
-        for (var p in params) {
-            if (params[p] != null) params[p] = String(params[p]).slice(0, 100);
-        }
-        send(event, params);
+    var formStarted = false;
+    form.addEventListener('input', function () {
+      if (!formStarted) {
+        formStarted = true;
+        if (window.LapaAnalytics) window.LapaAnalytics.formStart('lead_form');
+      }
     });
 
-    document.addEventListener('click', function (e) {
-        var target = e.target;
-        if (!target || !target.closest) return;
-        var el = target.closest('[data-event="pet_type_select"]');
-        if (!el) return;
-        var petType = el.dataset.petType;
-        if (!petType) return;
-
-        document.querySelectorAll('.pet-select__card').forEach(function (card) {
-            card.classList.remove('pet-select__card--active');
-        });
-        el.classList.add('pet-select__card--active');
-        sessionStorage.setItem('selected_pet', petType);
-        send('pet_type_select', { pet_type: petType });
-
-        var services = document.querySelector('.services');
-        if (services) services.scrollIntoView({ behavior: 'smooth' });
-    });
-
-    // --- FIX: Обработка FAQ через клик по summary (надежнее, чем toggle) ---
-    document.addEventListener('click', function (e) {
-        var target = e.target;
-        if (!target || !target.closest) return;
-        var summary = target.closest('summary');
-        if (!summary) return;
-        var details = summary.closest('details[data-event="faq_open"]');
-        if (!details) return;
-        
-        // Отправляем событие только если элемент открывается
-        if (!details.open) {
-            send('faq_open', { question_id: details.dataset.questionId || 'unknown' });
+    function showError(input, message) {
+      if (!input) return;
+      var name = input.getAttribute('name');
+      var error = name ? form.querySelector('.error-text[data-for="' + name + '"]') : null;
+      if (!error) {
+        error = document.getElementById('formError');
+        if (!error) {
+          error = document.createElement('div');
+          error.id = 'formError';
+          error.className = 'error-text';
+          form.appendChild(error);
         }
-    });
+      }
+      error.textContent = message;
+      if (input.type !== 'checkbox' && input.style) {
+        input.style.borderColor = '#e74c3c';
+        if (input.focus) input.focus();
+      }
+      if (window.LapaAnalytics) window.LapaAnalytics.formError(name || 'form', 'validation');
+    }
 
+    function clearErrors() {
+      form.querySelectorAll('.error-text').forEach(function (el) { el.textContent = ''; });
+      form.querySelectorAll('input, select, textarea').forEach(function (el) { el.style.borderColor = ''; });
+    }
+
+    function validate() {
+      clearErrors();
+      var nameEl = form.querySelector('[name="name"]');
+      var phoneEl = form.querySelector('[name="phone"]');
+      var emailEl = form.querySelector('[name="email"]');
+      var petEl = form.querySelector('[name="pet_type"]:checked');
+      var serviceEl = form.querySelector('[name="service"]');
+
+      var name = nameEl ? nameEl.value.trim() : '';
+      var phone = phoneEl ? normalizePhone(phoneEl.value) : null;
+      var email = emailEl ? emailEl.value.trim() : '';
+
+      if (name.length < 2 || name.length > 60) { showError(nameEl, 'Введите имя от 2 до 60 символов.'); return false; }
+      if (!phone) { showError(phoneEl, 'Введите телефон в формате +7XXXXXXXXXX.'); return false; }
+      if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showError(emailEl, 'Проверьте формат электронной почты.'); return false; }
+      if (!consentEl || !consentEl.checked) { showError(consentEl, 'Необходимо согласиться с политикой конфиденциальности.'); return false; }
+      if (!petEl) { showError(form.querySelector('[name="pet_type"]'), 'Выберите вид питомца.'); return false; }
+      if (!serviceEl || !serviceEl.value) { showError(serviceEl, 'Выберите услугу.'); return false; }
+      return true;
+    }
+
+    form.addEventListener('submit', function (event) {
+      event.preventDefault();
+      if (!validate()) return;
+      if (!endpoint || endpoint.indexOf('ВАШ') !== -1) {
+        showError(btn, 'Приёмник заявок не настроен.');
+        return;
+      }
+
+      var petEl = form.querySelector('[name="pet_type"]:checked');
+      var serviceEl = form.querySelector('[name="service"]');
+
+      // Формируем данные для отправки
+      var payload = {
+        request_id: requestId,
+        name: form.querySelector('[name="name"]').value.trim(),
+        phone: normalizePhone(form.querySelector('[name="phone"]').value),
+        email: form.querySelector('[name="email"]').value.trim(),
+        pet_type: petEl.value,
+        service: serviceEl.value,
+        utm_source: getUtm('utm_source', 'direct'),
+        utm_medium: getUtm('utm_medium', 'none'),
+        utm_campaign: getUtm('utm_campaign', 'not_set'),
+        utm_content: getUtm('utm_content', 'not_set')
+      };
+
+      if (btn) { btn.disabled = true; btn.textContent = 'Отправляем…'; }
+      if (window.LapaAnalytics) window.LapaAnalytics.formSubmit('lead_form');
+
+      // --- ОТПРАВКА ЧЕРЕЗ СКРЫТЫЙ IFRAME ---
+      var iframeName = 'hidden_iframe_' + Date.now();
+      var iframe = document.createElement('iframe');
+      iframe.name = iframeName;
+      iframe.style.display = 'none';
+      document.body.appendChild(iframe);
+
+      var tempForm = document.createElement('form');
+      tempForm.method = 'POST';
+      tempForm.action = endpoint;
+      tempForm.target = iframeName;
+      tempForm.style.display = 'none';
+
+      // Передаем данные просто как поля формы
+      for (var key in payload) {
+        var input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = key;
+        input.value = payload[key];
+        tempForm.appendChild(input);
+      }
+
+      document.body.appendChild(tempForm);
+      tempForm.submit();
+
+      // Через 2 секунды показываем страницу спасибо
+      setTimeout(function () {
+        document.body.removeChild(tempForm);
+        document.body.removeChild(iframe);
+        sessionStorage.removeItem('request_id');
+
+        var go = function () {
+          window.location.href = 'thanks.html?request_id=' + encodeURIComponent(requestId);
+        };
+        if (window.LapaAnalytics) {
+          window.LapaAnalytics.generateLead(payload.pet_type, payload.service, payload.utm_source, go);
+        } else {
+          go();
+        }
+      }, 2000);
+    });
+  });
 })();
