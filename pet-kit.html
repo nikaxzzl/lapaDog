@@ -1,51 +1,129 @@
+```html
 <!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>Аптечка кошки и собаки — ветклиника «Лападок»</title>
-  <meta name="description" content="Список первой аптечки для кошки и собаки. Скачать PDF. Промокод VACKINA на вакцинацию.">
+
+  <meta
+    name="description"
+    content="Список первой аптечки для кошки и собаки. Скачать PDF. Промокод VAKCINA на вакцинацию."
+  >
+
   <link rel="icon" href="img/log.ico">
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link
+    rel="preconnect"
+    href="https://fonts.gstatic.com"
+    crossorigin
+  >
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  >
+
   <link rel="stylesheet" href="css/style.css">
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XVT5FS2HTK"></script>
-  <script>window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-XVT5FS2HTK');</script>
+
+  <!-- Google Analytics 4 -->
+  <script
+    async
+    src="https://www.googletagmanager.com/gtag/js?id=G-XVT5FS2HTK"
+  ></script>
+
+  <script>
+    window.dataLayer = window.dataLayer || [];
+
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+
+    gtag('js', new Date());
+    gtag('config', 'G-XVT5FS2HTK');
+  </script>
 </head>
+
 <body>
+  <!-- Шапка сайта -->
   <header class="header">
     <div class="container header__inner">
       <a href="index.html" class="logo">
-        <img src="img/logo.png" alt="Лападок" width="50" height="50">
+        <img
+          src="img/logo.png"
+          alt="Лападок"
+          width="50"
+          height="50"
+        >
+
         <div class="logo__text">
           <span class="logo__title">ЛАПАДОК</span>
-          <span class="logo__subtitle">ветеринарная клиника 24/7</span>
+          <span class="logo__subtitle">
+            ветеринарная клиника 24/7
+          </span>
         </div>
       </a>
-      <nav class="nav">
+
+      <nav class="nav" aria-label="Основная навигация">
         <ul class="nav__list">
           <li><a href="index.html">Главная</a></li>
           <li><a href="services.html">Услуги</a></li>
           <li><a href="doctors.html">Врачи</a></li>
           <li><a href="vaccines.html">Прививки</a></li>
-          <li><a href="pet-kit.html" class="is-active">Аптечка</a></li>
+          <li>
+            <a href="pet-kit.html" class="is-active" aria-current="page">
+              Аптечка
+            </a>
+          </li>
           <li><a href="contacts.html">Контакты</a></li>
         </ul>
       </nav>
-      <a href="tel:+79006062424" class="header__phone" data-event="contact_click" data-contact-type="phone">+7 900 606-24-24</a>
+
+      <a
+        href="tel:+79006062424"
+        class="header__phone"
+        data-event="contact_click"
+        data-contact-type="phone"
+      >
+        +7 900 606-24-24
+      </a>
     </div>
   </header>
 
+  <!-- Основное содержимое -->
   <main class="section">
     <div class="container">
       <div class="section__header text-center">
-        <h1 class="section__title">Аптечка кошки и собаки</h1>
+        <h1 class="section__title">
+          Аптечка кошки и собаки
+        </h1>
+
+        <p>
+          Базовый список предметов для домашней аптечки питомца.
+        </p>
       </div>
 
-      <div class="features__grid" style="max-width: 800px; margin: 0 auto;">
-        <div class="feature-card" style="grid-column: span 2;">
-          <ul style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; font-size: 16px; color: var(--color-text);">
+      <section
+        class="features__grid"
+        aria-label="Список аптечки"
+        style="max-width: 800px; margin: 0 auto;"
+      >
+        <div
+          class="feature-card"
+          style="grid-column: 1 / -1;"
+        >
+          <ol
+            style="
+              display: grid;
+              grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+              gap: 15px 25px;
+              padding-left: 25px;
+              font-size: 16px;
+              color: var(--color-text);
+            "
+          >
             <li>🧵 Бинт стерильный</li>
             <li>🧴 Антисептик (хлоргексидин)</li>
             <li>💧 Перекись водорода</li>
@@ -56,41 +134,227 @@
             <li>🛡️ Воротник защитный</li>
             <li>🧻 Влажные салфетки</li>
             <li>📞 Номер круглосуточной клиники</li>
-          </ul>
-        </div>
-      </div>
+            <li>✂️ Тупоконечные ножницы</li>
+            <li>🧷 Пинцет</li>
+          </ol>
 
-      <div style="text-align: center; margin-top: 40px; display: flex; flex-direction: column; gap: 20px; align-items: center;">
-        <a href="files/pet-kit.pdf" download class="btn btn--outline"
-        data-event="file_download" data-file-name="pet-kit" data-file-extension="pdf">
-        Скачать PDF
+          <p
+            style="
+              margin-top: 20px;
+              color: var(--color-text-muted);
+              font-size: 14px;
+            "
+          >
+            Состав аптечки и применение медицинских средств
+            согласуйте с ветеринарным врачом. Не давайте питомцу
+            лекарства без назначения специалиста.
+          </p>
+        </div>
+      </section>
+
+      <!-- Скачивание PDF, промокод и запись -->
+      <div
+        style="
+          text-align: center;
+          margin-top: 40px;
+          display: flex;
+          flex-direction: column;
+          gap: 20px;
+          align-items: center;
+        "
+      >
+        <a
+          href="files/pet-kit.pdf"
+          download
+          class="btn btn--outline"
+          data-event="file_download"
+          data-file-name="pet-kit"
+          data-file-extension="pdf"
+        >
+          Скачать PDF
         </a>
-        <div class="feature-card" style="max-width: 400px; width: 100%; text-align: center; padding: 30px;">
-          <p style="color: var(--color-text-muted); margin-bottom: 10px;">Промокод:</p>
-          <strong style="font-size: 32px; color: var(--color-primary-dark); letter-spacing: 2px;">VACKINA</strong>
-          <button class="btn btn--small btn--primary" style="margin-top: 15px;"
-                  data-event="promo_copy" data-promo-code="VACKINA">Копировать</button>
-          <p style="color: var(--color-primary-dark); font-weight: 500; margin-top: 15px;">Скидка −20 % на комплексную вакцинацию</p>
+
+        <div
+          class="feature-card"
+          style="
+            max-width: 400px;
+            width: 100%;
+            box-sizing: border-box;
+            text-align: center;
+            padding: 30px;
+          "
+        >
+          <p
+            style="
+              color: var(--color-text-muted);
+              margin-bottom: 10px;
+            "
+          >
+            Промокод:
+          </p>
+
+          <strong
+            id="promo-code"
+            style="
+              display: block;
+              font-size: 32px;
+              color: var(--color-primary-dark);
+              letter-spacing: 2px;
+            "
+          >
+            VAKCINA
+          </strong>
+
+          <button
+            id="copy-promo"
+            type="button"
+            class="btn btn--small btn--primary"
+            style="margin-top: 15px;"
+            data-event="promo_copy"
+            data-promo-code="VAKCINA"
+          >
+            Копировать
+          </button>
+
+          <p
+            id="promo-copy-status"
+            role="status"
+            aria-live="polite"
+            style="
+              margin-top: 10px;
+              font-size: 14px;
+            "
+          ></p>
+
+          <p
+            style="
+              color: var(--color-primary-dark);
+              font-weight: 500;
+              margin-top: 15px;
+            "
+          >
+            Скидка −20 % на комплексную вакцинацию
+          </p>
         </div>
 
-        <a href="contacts.html?service=vaccine" class="btn btn--primary"
-           data-event="cta_click" data-button-name="petkit_record" data-page-section="pet-kit">Записаться на прививку</a>
+        <a
+          href="contacts.html?service=vaccine"
+          class="btn btn--primary"
+          data-event="cta_click"
+          data-button-name="petkit_record"
+          data-page-section="pet-kit"
+        >
+          Записаться на прививку
+        </a>
       </div>
     </div>
   </main>
 
+  <!-- Подвал сайта -->
   <footer class="footer">
     <div class="container footer__inner">
       <p>© 2026 ООО «Лападок». ИНН 9906 410 258.</p>
+
       <div class="footer__socials">
-        <a href="https://instagram.com/lapadok_vet" target="_blank" rel="noopener" data-event="social_click" data-network="instagram" data-page-section="footer">Instagram</a>
-        <a href="https://vk.com/lapadok_vet" target="_blank" rel="noopener" data-event="social_click" data-network="vk" data-page-section="footer">ВКонтакте</a>
-        <a href="https://t.me/lapadok_vet" target="_blank" rel="noopener" data-event="social_click" data-network="telegram" data-page-section="footer">Telegram</a>
-        <a href="https://youtube.com/@lapadok_vet" target="_blank" rel="noopener" data-event="social_click" data-network="youtube" data-page-section="footer">YouTube</a>
+        <a
+          href="https://instagram.com/lapadok_vet"
+          target="_blank"
+          rel="noopener noreferrer"
+          data-event="social_click"
+          data-network="instagram"
+          data-page-section="footer"
+        >
+          Instagram
+        </a>
+
+        <a
+          href="https://vk.com/lapadok_vet"
+          target="_blank"
+          rel="noopener noreferrer"
+          data-event="social_click"
+          data-network="vk"
+          data-page-section="footer"
+        >
+          ВКонтакте
+        </a>
+
+        <a
+          href="https://t.me/lapadok_vet"
+          target="_blank"
+          rel="noopener noreferrer"
+          data-event="social_click"
+          data-network="telegram"
+          data-page-section="footer"
+        >
+          Telegram
+        </a>
+
+        <a
+          href="https://youtube.com/@lapadok_vet"
+          target="_blank"
+          rel="noopener noreferrer"
+          data-event="social_click"
+          data-network="youtube"
+          data-page-section="footer"
+        >
+          YouTube
+        </a>
       </div>
-      <a href="privacy.html">Политика конфиденциальности</a>
+
+      <a href="privacy.html">
+        Политика конфиденциальности
+      </a>
     </div>
   </footer>
+
+  <!-- Аналитика проекта -->
   <script src="js/analytics.js"></script>
+
+  <!-- Копирование промокода -->
+  <script>
+    (() => {
+      const button = document.getElementById('copy-promo');
+      const codeElement = document.getElementById('promo-code');
+      const status = document.getElementById('promo-copy-status');
+
+      if (!button || !codeElement || !status) {
+        return;
+      }
+
+      button.addEventListener('click', async () => {
+        const code = codeElement.textContent.trim();
+
+        try {
+          if (navigator.clipboard && window.isSecureContext) {
+            await navigator.clipboard.writeText(code);
+          } else {
+            const textarea = document.createElement('textarea');
+
+            textarea.value = code;
+            textarea.setAttribute('readonly', '');
+            textarea.style.position = 'fixed';
+            textarea.style.opacity = '0';
+
+            document.body.appendChild(textarea);
+            textarea.select();
+
+            const copied = document.execCommand('copy');
+            textarea.remove();
+
+            if (!copied) {
+              throw new Error('Копирование не удалось');
+            }
+          }
+
+          status.textContent = 'Промокод VAKCINA скопирован.';
+        } catch (error) {
+          status.textContent =
+            'Не удалось скопировать автоматически. ' +
+            'Промокод: ' + code;
+        }
+      });
+    })();
+  </script>
 </body>
 </html>
+```
