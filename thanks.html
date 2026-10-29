@@ -59,7 +59,7 @@
           <strong class="thanks__request-id" id="request-id">REQ-—</strong>
         </div>
 
-        <img class="thanks__image" src="img/priem.png" alt="Приём в клинике «Лападок»">
+        <img class="thanks__image" src="img/dog_cat_vet.png" alt="Приём в клинике «Лападок»">
 
         <div class="thanks__tips">
           <h2 class="thanks__tips-title">Как подготовить питомца к приёму</h2>
@@ -114,5 +114,24 @@
       }
     })();
   </script>
+  <script>
+  document.addEventListener('DOMContentLoaded', function () {
+    // Получаем request_id из адресной строки браузера
+    var urlParams = new URLSearchParams(window.location.search);
+    var requestId = urlParams.get('request_id');
+    
+    // Если он есть в URL, заменяем им заглушку REQ-—
+    if (requestId) {
+      // Ищем элемент strong, внутри которого находится текст с REQ
+      var strongElements = document.querySelectorAll('strong');
+      strongElements.forEach(function (el) {
+        if (el.textContent.indexOf('REQ-') !== -1) {
+          el.textContent = requestId;
+        }
+      });
+    }
+  });
+</script>
+
 </body>
 </html>
