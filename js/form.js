@@ -12,6 +12,16 @@
     var endpoint = window.LEADS_ENDPOINT || '';
     var consentEl = form.querySelector('[name="consent"]');
 
+    // --- 1. ЗАЩИТА ОТ ДУБЛЕЙ (localStorage) ---
+    var isSent = localStorage.getItem('lead_sent') === 'true';
+    if (isSent) {
+      if (btn) {
+        btn.disabled = true;
+        btn.textContent = 'Заявка уже отправлена';
+      }
+      return; // Выходим, если заявка уже была
+    }
+
     (function captureUtm() {
       var keys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content'];
       var params = new URLSearchParams(window.location.search);
@@ -99,6 +109,9 @@
 
     form.addEventListener('submit', function (event) {
       event.preventDefault();
+      
+      if (isSent) return; // Двойная защита
+
       if (!validate()) return;
       if (!endpoint || endpoint.indexOf('ВАШ') !== -1) {
         showError(btn, 'Приёмник заявок не настроен.');
@@ -124,7 +137,6 @@
       if (btn) { btn.disabled = true; btn.textContent = 'Отправляем…'; }
       if (window.LapaAnalytics) window.LapaAnalytics.formSubmit('lead_form');
 
-      // САМЫЙ НАДЕЖНЫЙ СПОСОБ: fetch с no-cors
       var formData = new FormData();
       for (var key in payload) {
         formData.append(key, payload[key]);
@@ -132,12 +144,12 @@
 
       fetch(endpoint, {
         method: 'POST',
-        mode: 'no-cors', // <-- Вот это спасает от всех ошибок CORS
+        mode: 'no-cors',
         body: formData
       })
       .then(function () {
-        // При mode: no-cors мы не можем прочитать ответ,
-        // но мы точно знаем, что запрос ушел.
+        // Запоминаем, что отправили (защита от дублей при обновлении страницы)
+        localStorage.setItem('lead_sent', 'true');
         sessionStorage.removeItem('request_id');
         
         var go = function () {
