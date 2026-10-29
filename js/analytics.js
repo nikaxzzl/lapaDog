@@ -1,172 +1,87 @@
-/* js/form.js — отправка заявки на Apps Script + события GA4 */
-
+/* js/analytics.js — все события GA4 в одном файле */
 (function () {
   'use strict';
 
-  document.addEventListener('DOMContentLoaded', function () {
-    var form = document.getElementById('leadForm');
-    if (!form) return;
+  var GA_ID = 'G-XVT5FS2HTK';
 
-    var btn = form.querySelector('button[type="submit"]');
-    var originalBtnText = btn ? btn.textContent : 'Отправить заявку';
-    var endpoint = window.LEADS_ENDPOINT || '';
-    var consentEl = form.querySelector('[name="consent"]');
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { window.dataLayer.push(arguments); }
+  window.gtag = gtag;
+  gtag('js', new Date());
+  gtag('config', GA_ID); // без debug_mode
 
-    // --- Сбор UTM-меток ---
-    (function captureUtm() {
-      var keys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content'];
-      var params = new URLSearchParams(window.location.search);
-      keys.forEach(function (key) {
-        var value = params.get(key);
-        if (value) sessionStorage.setItem(key, value);
+  function send(name, params) {
+    var clean = {};
+    if (params) {
+      Object.keys(params).forEach(function (k) {
+        var v = params[k] == null ? '' : String(params[k]);
+        clean[k] = v.length > 100 ? v.slice(0, 100) : v;
       });
-    })();
-
-    // --- Защита от повторной отправки ---
-    var requestId = sessionStorage.getItem('request_id');
-    if (!requestId) {
-      if (window.crypto && typeof window.crypto.randomUUID === 'function') {
-        requestId = 'REQ-' + window.crypto.randomUUID();
-      } else {
-        requestId = 'REQ-' + Date.now() + '-' + Math.random().toString(36).slice(2);
-      }
-      sessionStorage.setItem('request_id', requestId);
     }
+    gtag('event', name, clean);
+  }
 
-    function getUtm(key, fallback) {
-      return sessionStorage.getItem(key) || fallback;
-    }
+  // Делегирование data-event
+  document.addEventListener('click', function (e) {
+    var el = e.target.closest('[data-event]');
+    if (!el) return;
+    var name = el.getAttribute('data-event');
+    if (!name) return;
 
-    function normalizePhone(raw) {
-      var digits = String(raw || '').replace(/\D/g, '');
-      if (digits.length === 11 && digits.charAt(0) === '8') digits = '7' + digits.slice(1);
-      if (digits.length === 10) digits = '7' + digits;
-      return digits.length === 11 && digits.charAt(0) === '7' ? '+' + digits : null;
-    }
-
-    var formStarted = false;
-    form.addEventListener('input', function () {
-      if (!formStarted) {
-        formStarted = true;
-        if (window.LapaAnalytics) window.LapaAnalytics.formStart('lead_form');
+    var params = {};
+    Array.prototype.forEach.call(el.attributes, function (attr) {
+      if (attr.name.indexOf('data-') === 0 && attr.name !== 'data-event') {
+        params[attr.name.slice(5).replace(/-/g, '_')] = attr.value;
       }
     });
 
-    function showError(input, message) {
-      if (!input) return;
-      var name = input.getAttribute('name');
-      var error = name ? form.querySelector('.error-text[data-for="' + name + '"]') : null;
-      if (!error) {
-        error = document.getElementById('formError');
-        if (!error) {
-          error = document.createElement('div');
-          error.id = 'formError';
-          error.className = 'error-text';
-          form.appendChild(error);
-        }
-      }
-      error.textContent = message;
-      if (input.type !== 'checkbox' && input.style) {
-        input.style.borderColor = '#e74c3c';
-        if (input.focus) input.focus();
-      }
-      if (window.LapaAnalytics) window.LapaAnalytics.formError(name || 'form', 'validation');
+    if (name === 'cta_click' || name === 'social_click') {
+      params.page_section = el.getAttribute('data-page-section') ||
+        (el.closest('section') && el.closest('section').id) || 'unknown';
     }
+    send(name, params);
+  }, true);
 
-    function clearErrors() {
-      form.querySelectorAll('.error-text').forEach(function (el) { el.textContent = ''; });
-      form.querySelectorAll('input, select, textarea').forEach(function (el) { el.style.borderColor = ''; });
+  // scroll 90%
+  var scrolled = false;
+  window.addEventListener('scroll', function () {
+    if (scrolled) return;
+    var h = document.documentElement;
+    if ((h.scrollTop + window.innerHeight) / h.scrollHeight >= 0.9) {
+      scrolled = true;
+      send('scroll', { percent_scrolled: 90 });
     }
+  }, { passive: true });
 
-    function validate() {
-      clearErrors();
-      var nameEl = form.querySelector('[name="name"]');
-      var phoneEl = form.querySelector('[name="phone"]');
-      var emailEl = form.querySelector('[name="email"]');
-      var petEl = form.querySelector('[name="pet_type"]:checked');
-      var serviceEl = form.querySelector('[name="service"]');
-
-      var name = nameEl ? nameEl.value.trim() : '';
-      var phone = phoneEl ? normalizePhone(phoneEl.value) : null;
-      var email = emailEl ? emailEl.value.trim() : '';
-
-      if (name.length < 2 || name.length > 60) { showError(nameEl, 'Введите имя от 2 до 60 символов.'); return false; }
-      if (!phone) { showError(phoneEl, 'Введите телефон в формате +7XXXXXXXXXX.'); return false; }
-      if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showError(emailEl, 'Проверьте формат электронной почты.'); return false; }
-      if (!consentEl || !consentEl.checked) { showError(consentEl, 'Необходимо согласиться с политикой конфиденциальности.'); return false; }
-      if (!petEl) { showError(form.querySelector('[name="pet_type"]'), 'Выберите вид питомца.'); return false; }
-      if (!serviceEl || !serviceEl.value) { showError(serviceEl, 'Выберите услугу.'); return false; }
-      return true;
+  // outbound click
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest('a[href]');
+    if (!a) return;
+    var href = a.getAttribute('href') || '';
+    if (/^https?:\/\//i.test(href) && href.indexOf(location.host) === -1) {
+      send('click', { link_url: href, outbound: 'true' });
     }
+  }, true);
 
-    form.addEventListener('submit', function (event) {
-      event.preventDefault();
-      if (!validate()) return;
-      if (!endpoint || endpoint.indexOf('ВАШ') !== -1) {
-        showError(btn, 'Приёмник заявок не настроен.');
-        return;
-      }
+  // file_download
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest('a[href$=".pdf"], a[download]');
+    if (!a) return;
+    var href = a.getAttribute('href') || '';
+    var file = href.split('/').pop() || 'file';
+    var ext = file.indexOf('.') > -1 ? file.split('.').pop() : '';
+    send('file_download', { file_name: file, file_extension: ext });
+  }, true);
 
-      var petEl = form.querySelector('[name="pet_type"]:checked');
-      var serviceEl = form.querySelector('[name="service"]');
-
-      // Формируем данные для отправки
-      var payload = {
-        request_id: requestId,
-        name: form.querySelector('[name="name"]').value.trim(),
-        phone: normalizePhone(form.querySelector('[name="phone"]').value),
-        email: form.querySelector('[name="email"]').value.trim(),
-        pet_type: petEl.value,
-        service: serviceEl.value,
-        utm_source: getUtm('utm_source', 'direct'),
-        utm_medium: getUtm('utm_medium', 'none'),
-        utm_campaign: getUtm('utm_campaign', 'not_set'),
-        utm_content: getUtm('utm_content', 'not_set')
-      };
-
-      if (btn) { btn.disabled = true; btn.textContent = 'Отправляем…'; }
-      if (window.LapaAnalytics) window.LapaAnalytics.formSubmit('lead_form');
-
-      // --- ОТПРАВКА ЧЕРЕЗ СКРЫТЫЙ IFRAME ---
-      var iframeName = 'hidden_iframe_' + Date.now();
-      var iframe = document.createElement('iframe');
-      iframe.name = iframeName;
-      iframe.style.display = 'none';
-      document.body.appendChild(iframe);
-
-      var tempForm = document.createElement('form');
-      tempForm.method = 'POST';
-      tempForm.action = endpoint;
-      tempForm.target = iframeName;
-      tempForm.style.display = 'none';
-
-      // Передаем данные просто как поля формы
-      for (var key in payload) {
-        var input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = key;
-        input.value = payload[key];
-        tempForm.appendChild(input);
-      }
-
-      document.body.appendChild(tempForm);
-      tempForm.submit();
-
-      // Через 2 секунды показываем страницу спасибо
-      setTimeout(function () {
-        document.body.removeChild(tempForm);
-        document.body.removeChild(iframe);
-        sessionStorage.removeItem('request_id');
-
-        var go = function () {
-          window.location.href = 'thanks.html?request_id=' + encodeURIComponent(requestId);
-        };
-        if (window.LapaAnalytics) {
-          window.LapaAnalytics.generateLead(payload.pet_type, payload.service, payload.utm_source, go);
-        } else {
-          go();
-        }
-      }, 2000);
-    });
-  });
+  window.LapaAnalytics = {
+    send: send,
+    formStart: function (id) { send('form_start', { form_id: id }); },
+    formSubmit: function (id) { send('form_submit', { form_id: id }); },
+    formError: function (field, type) { send('form_error', { field_name: field, error_type: type }); },
+    vaccineCalc: function (pet, age) { send('vaccine_calc', { pet_type: pet, age_weeks: age }); },
+    generateLead: function (pet, service, source, done) {
+      send('generate_lead', { lead_pet_type: pet, lead_service: service, lead_source: source });
+      if (typeof done === 'function') setTimeout(done, 300);
+    }
+  };
 })();

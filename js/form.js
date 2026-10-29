@@ -1,5 +1,4 @@
 /* js/form.js — отправка заявки на Apps Script + события GA4 */
-
 (function () {
   'use strict';
 
@@ -8,19 +7,9 @@
     if (!form) return;
 
     var btn = form.querySelector('button[type="submit"]');
-    var originalBtnText = btn ? btn.textContent : 'Отправить заявку';
+    var originalBtnText = btn ? btn.textContent : 'Записаться';
     var endpoint = window.LEADS_ENDPOINT || '';
     var consentEl = form.querySelector('[name="consent"]');
-
-    // --- 1. ЗАЩИТА ОТ ДУБЛЕЙ (localStorage) ---
-    var isSent = localStorage.getItem('lead_sent') === 'true';
-    if (isSent) {
-      if (btn) {
-        btn.disabled = true;
-        btn.textContent = 'Заявка уже отправлена';
-      }
-      return; // Выходим, если заявка уже была
-    }
 
     (function captureUtm() {
       var keys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content'];
@@ -33,11 +22,9 @@
 
     var requestId = sessionStorage.getItem('request_id');
     if (!requestId) {
-      if (window.crypto && typeof window.crypto.randomUUID === 'function') {
-        requestId = 'REQ-' + window.crypto.randomUUID();
-      } else {
-        requestId = 'REQ-' + Date.now() + '-' + Math.random().toString(36).slice(2);
-      }
+      requestId = (window.crypto && crypto.randomUUID)
+        ? 'REQ-' + crypto.randomUUID()
+        : 'REQ-' + Date.now() + '-' + Math.random().toString(36).slice(2);
       sessionStorage.setItem('request_id', requestId);
     }
 
@@ -76,7 +63,6 @@
       error.textContent = message;
       if (input.type !== 'checkbox' && input.style) {
         input.style.borderColor = '#e74c3c';
-        if (input.focus) input.focus();
       }
       if (window.LapaAnalytics) window.LapaAnalytics.formError(name || 'form', 'validation');
     }
@@ -109,9 +95,6 @@
 
     form.addEventListener('submit', function (event) {
       event.preventDefault();
-      
-      if (isSent) return; // Двойная защита
-
       if (!validate()) return;
       if (!endpoint || endpoint.indexOf('ВАШ') !== -1) {
         showError(btn, 'Приёмник заявок не настроен.');
@@ -137,36 +120,32 @@
       if (btn) { btn.disabled = true; btn.textContent = 'Отправляем…'; }
       if (window.LapaAnalytics) window.LapaAnalytics.formSubmit('lead_form');
 
-      var formData = new FormData();
-      for (var key in payload) {
-        formData.append(key, payload[key]);
-      }
-
       fetch(endpoint, {
         method: 'POST',
-        mode: 'no-cors',
-        body: formData
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(payload)
       })
-      .then(function () {
-        // Запоминаем, что отправили (защита от дублей при обновлении страницы)
-        localStorage.setItem('lead_sent', 'true');
-        sessionStorage.removeItem('request_id');
-        
-        var go = function () {
-          window.location.href = 'thanks.html?request_id=' + encodeURIComponent(requestId);
-        };
-        if (window.LapaAnalytics) {
-          window.LapaAnalytics.generateLead(payload.pet_type, payload.service, payload.utm_source, go);
-        } else {
-          go();
-        }
-      })
-      .catch(function (error) {
-        console.error('Ошибка отправки заявки:', error);
-        showError(btn, 'Не удалось отправить заявку. Проверьте данные и попробуйте ещё раз.');
-        if (window.LapaAnalytics) window.LapaAnalytics.formError('form', 'server');
-        if (btn) { btn.disabled = false; btn.textContent = originalBtnText; }
-      });
+        .then(function (r) { return r.json(); })
+        .then(function (res) {
+          if (res && res.ok === true) {
+            sessionStorage.removeItem('request_id');
+            var go = function () {
+              window.location.href = 'thanks.html?request_id=' + encodeURIComponent(requestId);
+            };
+            if (window.LapaAnalytics) {
+              window.LapaAnalytics.generateLead(payload.pet_type, payload.service, payload.utm_source, go);
+            } else {
+              go();
+            }
+          } else {
+            throw new Error((res && res.error) || 'Ошибка приёмника');
+          }
+        })
+        .catch(function () {
+          showError(btn, 'Не удалось отправить. Попробуйте ещё раз или позвоните.');
+          if (window.LapaAnalytics) window.LapaAnalytics.formError('form', 'server');
+          if (btn) { btn.disabled = false; btn.textContent = originalBtnText; }
+        });
     });
   });
 })();
