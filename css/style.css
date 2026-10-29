@@ -63,13 +63,11 @@ img { max-width: 100%; display: block; }
   box-shadow: var(--shadow-card);
 }
 
+/* ИСПРАВЛЕНО: Бейдж теперь в потоке, не наезжает на текст */
 .badge--accent {
   background-color: var(--color-accent-yellow);
   color: var(--color-primary-dark);
-  position: absolute;
-  top: 15px;
-  left: 15px;
-  z-index: 2;
+  margin-bottom: 10px;
 }
 
 /* ================= КНОПКИ ================= */
@@ -125,7 +123,6 @@ img { max-width: 100%; display: block; }
 .nav__list a { font-weight: 500; color: var(--color-text); font-size: 15px; position: relative; }
 .nav__list a:hover { color: var(--color-primary); }
 
-/* Активный пункт меню (ТЗ 3.3) */
 .nav__list a.is-active {
   color: var(--color-primary);
   font-weight: 700;
